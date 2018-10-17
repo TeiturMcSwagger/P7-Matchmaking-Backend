@@ -3,10 +3,10 @@ import * as testController from "../controllers/testController";
 export class Routes {
     private ctrlFunc = new testController.TestController();
 
-    public routes(app) : void {
+    public async routes(app) {
         // Hello World example route, with controller
         app.route("/")
-            .get(this.ctrlFunc.testRouteFunction)
+            .get(await this.ctrlFunc.testRouteFunction)
             .post(this.ctrlFunc.testRouteFunction);
     }
 }

@@ -23,7 +23,6 @@ class App {
         //support application/x-www-form-urlencoded post data
         this.app.use(bodyParser.urlencoded({ extended: false }));
     }
-
 }
 
 export default new App().app;

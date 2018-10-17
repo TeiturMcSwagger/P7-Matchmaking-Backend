@@ -1,16 +1,20 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose = require("mongoose");
 const testModel_1 = require("../model/testModel");
-mongoose.connect('mongodb://138.68.83.112/test', { useNewUrlParser: true });
-const testModel = mongoose.model("books", testModel_1.TestSchema);
 class TestController {
     testRouteFunction(req, res) {
-        testModel.find({}, (err, data) => {
-            console.log(data);
-            res.json(data);
+        return __awaiter(this, void 0, void 0, function* () {
+            let booksModel = new testModel_1.TestModel();
+            res.json(yield booksModel.getAllBooks());
         });
-        //res.send({"message": "Hello World!", "status": 200});
     }
 }
 exports.TestController = TestController;
