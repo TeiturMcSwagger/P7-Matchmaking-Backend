@@ -27,11 +27,10 @@ class TestModel {
     }
     getAllBooks() {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`Trying to find books`);
-            this.booksModel.find({}, (err, data) => __awaiter(this, void 0, void 0, function* () {
+            return yield this.booksModel.find({}, (err, data) => {
                 console.log(data);
                 return data;
-            }));
+            });
         });
     }
 }

@@ -23,8 +23,7 @@ export class TestModel {
     }
 
     public async getAllBooks() {
-        console.log(`Trying to find books`);
-        this.booksModel.find({}, async (err, data) => {
+        return await this.booksModel.find({}, (err, data) => {
             console.log(data);
             return data;
         });

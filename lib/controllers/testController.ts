@@ -1,6 +1,5 @@
 import {Request, Response} from "express";
 
-import * as mongoose from "mongoose";
 import {TestModel} from "../model/testModel";
 
 export class TestController {
