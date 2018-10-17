@@ -3,10 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // lib/app.ts
 const express = require("express");
 const bodyParser = require("body-parser");
-const testRoutes_1 = require("./routes/testRoutes");
+const exampleRoutes_1 = require("./routes/exampleRoutes");
 class App {
     constructor() {
-        this.route = new testRoutes_1.Routes();
+        this.route = new exampleRoutes_1.Routes();
         this.app = express();
         this.config();
         // Init routes with app

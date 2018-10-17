@@ -24,7 +24,6 @@ export class TestModel {
 
     public async getAllBooks() {
         return await this.booksModel.find({}, (err, data) => {
-            console.log(data);
             return data;
         });
     }

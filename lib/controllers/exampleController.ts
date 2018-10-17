@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
 
-import {TestModel} from "../model/testModel";
+import {TestModel} from "../model/exampleModel";
 
 export class TestController {
     public async testRouteFunction(req : Request, res : Response){

@@ -1,4 +1,4 @@
-import * as testController from "../controllers/testController";
+import * as testController from "../controllers/exampleController";
 
 export class Routes {
     private ctrlFunc = new testController.TestController();
