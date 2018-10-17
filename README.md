@@ -1,1 +1,4 @@
-# P7-Matchmaking-Backend
+# Readme
+
+## For running the application
+npm run start
