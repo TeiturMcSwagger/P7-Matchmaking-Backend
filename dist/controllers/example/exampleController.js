@@ -12,7 +12,6 @@ const exampleService_1 = require("../../services/example/exampleService");
 class ExampleController {
     constructor() {
         this.bookService = new exampleService_1.ExampleService();
-        console.log(this.bookService);
     }
     exampleRouteFunction(req, res) {
         return __awaiter(this, void 0, void 0, function* () {

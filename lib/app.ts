@@ -17,17 +17,6 @@ class App {
 
     // Header configs
     private config(): void{
-<<<<<<< HEAD
-        // Headers
-        this.app.use(function(req, res, next) { 
-            // HEADERS
-            res.header('Access-Control-Allow-Origin', "*"); 
-            res.header('Access-Control-Allow-Methods','GET,PUT,POST,DELETE'); 
-            res.header('Access-Control-Allow-Headers', 'Content-Type'); 
-            next();
-        });
-
-=======
         // Allow "CORS"
         this.app.use(function(req, res, next) {
             // HEADERS
@@ -37,7 +26,6 @@ class App {
             next();
          });
         
->>>>>>> master
         // support application/json type post data
         this.app.use(bodyParser.json());
 

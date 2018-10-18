@@ -14,7 +14,7 @@ class App {
     }
     // Header configs
     config() {
-        // Headers
+        // Allow "CORS"
         this.app.use(function (req, res, next) {
             // HEADERS
             res.header('Access-Control-Allow-Origin', "*");
