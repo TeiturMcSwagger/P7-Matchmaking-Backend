@@ -13,6 +13,7 @@ export class GroupController {
     public async getGroups(req : Request, res : Response) 
     {
         console.log("Getting Groups!");
-        res.json(await this.groupService.getAllGroups());
+        const groupService = new GroupService();
+        return res.json(await groupService.getGroups());
     }
 }

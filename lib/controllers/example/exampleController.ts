@@ -8,6 +8,7 @@ export class ExampleController {
     }
 
     public async exampleRouteFunction(req : Request, res : Response) {
-
+        let bookService = new ExampleService();
+        return res.json(await bookService.getAllBooks());
     }
 }
