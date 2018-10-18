@@ -1,5 +1,8 @@
-import app from './app';
+/* Debugging environment */
+import './common/env';
 
-const PORT = 3000;
+import App from './app';
 
-app.listen(PORT, () => console.log("Listening on port: " + PORT));
+const port = process.env.PORT;
+
+new App().listen(port);
