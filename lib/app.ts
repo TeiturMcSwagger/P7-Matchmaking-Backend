@@ -1,7 +1,7 @@
 // lib/app.ts
 import * as express from "express";
 import * as bodyParser from "body-parser";
-import {Routes} from "./routes/testRoutes";
+import {Routes} from "./routes/Route";
 
 class App {
     public app: express.Application;
@@ -32,7 +32,6 @@ class App {
         //support application/x-www-form-urlencoded post data
         this.app.use(bodyParser.urlencoded({ extended: false }));
     }
-
 }
 
 

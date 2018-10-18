@@ -2,7 +2,7 @@ import * as mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
-export const TestSchema = new Schema({
+export const ExampleSchema = new Schema({
     element: {
         type: String,
         required: "Enter element1"
