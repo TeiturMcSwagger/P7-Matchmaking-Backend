@@ -17,6 +17,15 @@ class App {
 
     // Header configs
     private config(): void{
+        // Allow "CORS"
+        this.app.use(function(req, res, next) {
+            // HEADERS
+            res.header('Access-Control-Allow-Origin', "*");
+            res.header('Access-Control-Allow-Methods','GET,PUT,POST,DELETE');
+            res.header('Access-Control-Allow-Headers', 'Content-Type');
+            next();
+         });
+        
         // support application/json type post data
         this.app.use(bodyParser.json());
 
@@ -24,5 +33,7 @@ class App {
         this.app.use(bodyParser.urlencoded({ extended: false }));
     }
 }
+
+
 
 export default new App().app;
