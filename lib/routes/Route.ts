@@ -19,6 +19,7 @@ export class Routes {
 
         // Groups route
         app.route("/groups")
-            .get(this.groupController.getGroups);
+            .get(this.groupController.getGroups)
+            .post(this.groupController.createGroup);
     }
 }

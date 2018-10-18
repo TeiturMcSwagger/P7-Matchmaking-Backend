@@ -16,4 +16,8 @@ export class GroupService {
             return data;
         });
     }
+
+    public async createGroup(group) {
+        return await this.groupsModel.create(group);
+    }
 }
