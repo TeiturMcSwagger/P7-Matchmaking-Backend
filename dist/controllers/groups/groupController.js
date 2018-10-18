@@ -8,20 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose = require("mongoose");
-const exampleModel_1 = require("../../models/example/exampleModel");
-mongoose.connect('mongodb://138.68.83.112/test', { useNewUrlParser: true });
-class ExampleService {
+const groupService_1 = require("../../services/group/groupService");
+class GroupController {
     constructor() {
-        this.booksModel = mongoose.model("books", exampleModel_1.ExampleSchema);
+        this.groupService = new groupService_1.GroupService();
     }
-    getAllBooks() {
+    getGroups(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.booksModel.find({}, (err, data) => {
-                return data;
-            });
+            console.log("Getting Groups!");
+            res.json(yield this.groupService.getAllGroups());
         });
     }
 }
-exports.ExampleService = ExampleService;
-//# sourceMappingURL=exampleService.js.map
+exports.GroupController = GroupController;
+//# sourceMappingURL=groupController.js.map

@@ -9,19 +9,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose = require("mongoose");
-const exampleModel_1 = require("../../models/example/exampleModel");
+const groupModel_1 = require("../../models/groups/groupModel");
 mongoose.connect('mongodb://138.68.83.112/test', { useNewUrlParser: true });
-class ExampleService {
+class GroupService {
     constructor() {
-        this.booksModel = mongoose.model("books", exampleModel_1.ExampleSchema);
+        this.groupModel = mongoose.model("groups", groupModel_1.GroupSchema);
+        console.log("Groups constructed!");
     }
-    getAllBooks() {
+    getAllGroups() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.booksModel.find({}, (err, data) => {
+            console.log("Returning groups!");
+            return yield this.groupModel.find({}, (err, data) => {
                 return data;
             });
         });
     }
 }
-exports.ExampleService = ExampleService;
-//# sourceMappingURL=exampleService.js.map
+exports.GroupService = GroupService;
+//# sourceMappingURL=groupService.js.map

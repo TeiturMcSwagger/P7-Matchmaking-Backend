@@ -1,10 +1,17 @@
 import {Request, Response} from "express";
 
-import {ExampleModel} from "../../services/example/exampleService";
+import {ExampleService} from "../../services/example/exampleService";
 
 export class ExampleController {
+    private bookService: ExampleService;
+
+    constructor(){
+        this.bookService = new ExampleService();
+    }
+
     public async exampleRouteFunction(req : Request, res : Response) {
-        let booksModel = new ExampleModel();
-        res.json(await booksModel.getAllBooks());
+        let books = new ExampleService();
+        res.json(await books.getAllBooks());
+        console.log(await this.bookService.getAllBooks());
     }
 }
