@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // lib/app.ts
 const express = require("express");
 const bodyParser = require("body-parser");
-const exampleRoutes_1 = require("./routes/exampleRoutes");
+const exampleRoutes_1 = require("./routes/example/exampleRoutes");
 class App {
     constructor() {
         this.route = new exampleRoutes_1.Routes();

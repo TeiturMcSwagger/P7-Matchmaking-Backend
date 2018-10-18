@@ -1,7 +1,7 @@
 // lib/app.ts
 import * as express from "express";
 import * as bodyParser from "body-parser";
-import {Routes} from "./routes/exampleRoutes";
+import {Routes} from "./routes/Route";
 
 class App {
     public app: express.Application;
