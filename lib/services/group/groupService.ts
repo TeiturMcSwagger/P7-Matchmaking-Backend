@@ -20,4 +20,17 @@ export class GroupService {
     public async createGroup(group) {
         return await this.groupsModel.create(group);
     }
+
+    public async getGroup(group_id : String) {
+        let group;
+        try{
+            group = await this.groupsModel.findById(group_id, function (err, adventure) {});
+        }
+        catch(e){
+            group = null;
+        }
+        finally{
+            return group;
+        }        
+    }
 }
