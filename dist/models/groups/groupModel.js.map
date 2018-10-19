@@ -1,0 +1,1 @@
+{"version":3,"file":"groupModel.js","sourceRoot":"","sources":["../../../lib/models/groups/groupModel.ts"],"names":[],"mappings":";;AAAA,qCAAqC;AAErC,MAAM,MAAM,GAAG,QAAQ,CAAC,MAAM,CAAC;AAElB,QAAA,WAAW,GAAG,IAAI,MAAM,CAAC;IAClC,OAAO,EAAE;QACL,IAAI,EAAE,MAAM;QACZ,QAAQ,EAAE,gBAAgB;KAC7B;IACD,IAAI,EAAE;QACF,IAAI,EAAE,MAAM;QACZ,QAAQ,EAAE,gBAAgB;KAC7B;CACJ,CAAC,CAAC"}
