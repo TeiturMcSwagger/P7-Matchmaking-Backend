@@ -1,0 +1,1 @@
+{"version":3,"file":"exampleModel.js","sourceRoot":"","sources":["../../../lib/models/example/exampleModel.ts"],"names":[],"mappings":";;AAAA,qCAAqC;AAErC,MAAM,MAAM,GAAG,QAAQ,CAAC,MAAM,CAAC;AAElB,QAAA,aAAa,GAAG,IAAI,MAAM,CAAC;IACpC,OAAO,EAAE;QACL,IAAI,EAAE,MAAM;QACZ,QAAQ,EAAE,gBAAgB;KAC7B;IACD,IAAI,EAAE;QACF,IAAI,EAAE,MAAM;QACZ,QAAQ,EAAE,gBAAgB;KAC7B;CACJ,CAAC,CAAC"}
