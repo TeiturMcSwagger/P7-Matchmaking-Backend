@@ -14,8 +14,7 @@ export class Routes {
         // Hello World example route, with controller
         app.route("/")
             .get(this.ctrlFunc.exampleRouteFunction)
-            .post(this.ctrlFunc.exampleRouteFunction);
-        
+            .post(this.ctrlFunc.exampleRouteFunction);        
 
         // Groups route
         app.route("/groups")
