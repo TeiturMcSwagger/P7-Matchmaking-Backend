@@ -11,6 +11,13 @@ export class GroupController {
 
     public async createGroup(req : Request, res : Response) {
         const groupService = new GroupService();
-        console.log(groupService.createGroup(req.body));
+        try {
+            const group = req.body;
+            const result = await groupService.createGroup(group);
+            res.json(result);
+
+        } catch(e) {
+            res.json(e);
+        }
     }
 }
