@@ -12,3 +12,10 @@ npm run build
 ```
 npm run start
 ```
+
+## For running in development
+
+```
+npm run dev
+```
+

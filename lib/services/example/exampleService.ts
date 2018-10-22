@@ -1,10 +1,11 @@
 import * as mongoose from "mongoose";
 
 import {ExampleSchema} from "../../models/example/exampleModel";
+import { GroupSchema } from "../../models/groups/groupModel";
 
 mongoose.connect('mongodb://138.68.83.112/test', { useNewUrlParser: true });
 
-export class ExampleModel {
+export class ExampleService {
     private booksModel;
 
     constructor(){
