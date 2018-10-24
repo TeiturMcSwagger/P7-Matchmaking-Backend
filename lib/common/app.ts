@@ -1,21 +1,28 @@
 // lib/app.ts
 import * as express from "express";
 import * as os from "os";
-import logger from './common/logger'
-import {Application} from "express";
+import logger from "./logger";
+import { Application } from "express";
+import "../controllers/example/exampleController"
+import "reflect-metadata";
 import * as bodyParser from "body-parser";
-import { Routes } from "./routes/Route";
+import {
+  interfaces,
+  InversifyExpressServer,
+  TYPE
+} from "inversify-express-utils";
+import { AppContainer } from "./inversify.config";
 
 export default class App {
   public app: express.Application;
-  public route: Routes = new Routes();
-
+  private server : InversifyExpressServer ;
   constructor() {
     this.app = express();
     this.config();
+    this.server = new InversifyExpressServer(AppContainer, null, null, this.app);
+    this.app = this.server.build();
 
     // Init routes with app
-    this.route.routes(this.app);
   }
 
   listen(p: string | number = process.env.PORT): Application {
@@ -46,4 +53,3 @@ export default class App {
     this.app.use(bodyParser.urlencoded({ extended: false }));
   }
 }
-

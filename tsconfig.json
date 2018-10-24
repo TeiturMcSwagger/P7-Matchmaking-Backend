@@ -7,6 +7,10 @@
         "sourceMap": true,
         "target": "es6",
         "outDir": "./dist",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "lib": ["es6"],
+        "types": ["reflect-metadata"],
         "baseUrl": "./lib"
     },
     "include": [
