@@ -15,7 +15,6 @@ export class ExampleService implements BookService {
   constructor() {
     this.booksModel = mongoose.model("books", ExampleSchema);
   }
-
   public async getAllBooks() {
     return "example service - getAllBooks";
     return await this.booksModel.find({}, (err, data) => {
