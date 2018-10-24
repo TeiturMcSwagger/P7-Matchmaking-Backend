@@ -1,5 +1,4 @@
 import {ExampleController} from "../controllers/example/exampleController";
-
 import {GroupController} from "../controllers/groups/groupController"
 
 export class Routes {
