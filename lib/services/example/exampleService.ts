@@ -4,7 +4,7 @@ import { BookService } from "../interfaces";
 import { ExampleSchema } from "../../models/example/exampleModel";
 
 mongoose.connect(
-  "mongodb://138.68.83.112/test",
+  process.env.MONGOURL,
   { useNewUrlParser: true }
 );
 
@@ -17,8 +17,5 @@ export class ExampleService implements BookService {
   }
   public async getAllBooks() {
     return "example service - getAllBooks";
-    return await this.booksModel.find({}, (err, data) => {
-      return data;
-    });
   }
 }

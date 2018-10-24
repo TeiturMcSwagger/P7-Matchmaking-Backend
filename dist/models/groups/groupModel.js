@@ -1,15 +1,15 @@
-import * as mongoose from "mongoose";
-import * as randomstring from "randomstring";
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const mongoose = require("mongoose");
+const randomstring = require("randomstring");
 const Schema = mongoose.Schema;
-
-export const GroupSchema = new Schema({
-    name: { 
+exports.GroupSchema = new Schema({
+    name: {
         type: String,
         required: true,
         minlength: 1,
     },
-    game: { 
+    game: {
         type: String,
         required: true,
         minlength: 1,
@@ -23,8 +23,6 @@ export const GroupSchema = new Schema({
         type: String,
         default: randomstring.generate
     },
-    users: {
-        type: [String], 
-        default: []
-    },
+    users: Array
 });
+//# sourceMappingURL=groupModel.js.map

@@ -13,6 +13,6 @@ export class ExampleController implements interfaces.Controller {
     @httpGet("/")
     public async exampleRouteFunction(req : Request, res : Response) {
         let service = new ExampleService();
-        res.json(await service.getAllBooks());
+        res.json(await this.bookService.getAllBooks());
     }
 }
