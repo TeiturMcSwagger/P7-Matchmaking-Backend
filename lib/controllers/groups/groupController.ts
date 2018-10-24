@@ -1,6 +1,9 @@
+import {Response as BEResponse} from "../../response/response";
+
 import {Request, Response} from "express";
 
-import {GroupService} from "../../services/group/groupService"
+import {GroupService} from "../../services/group/groupService";
+
 
 export class GroupController {
     public async getGroups(req : Request, res : Response) 
@@ -17,34 +20,24 @@ export class GroupController {
     public async getGroup(req : Request, res : Response) {
         const groupService = new GroupService();
         var group = await groupService.getGroup(req.params.group_id);
-        var response = {
-            error : "",
-            statuscode : 0,
-            data : null
-        }
+        var response = new BEResponse(group);
+        
         // Invalid group id
-        // TODO: handle appropriately (if any special handling is needed on the backend)
         if(group == null){
             response.error = "No group exists with group id " + req.params.group_id;
             response.statuscode = 1;
         }
-        else {
-            response.data = group;
-        }
 
         // Return group obj (null if group_id does not correspond to a group in the DB)
-        res.json(response);
+        res.send(response);
     }
 
     public async verifyInvite(req : Request, res : Response) {
         // 1) Check if a group exists with id 'group_id'
         const groupService = new GroupService();
         var group = await groupService.getGroup(req.params.group_id);
-        var response = {
-            error : "",
-            statuscode : 0,
-            data : null
-        }
+        var response = new BEResponse(group);
+
         // TODO: Correctly/appropriately handle incorrect group ids
         // What should we send as response? How should we handle it in the frontend?
         if(group == null){
