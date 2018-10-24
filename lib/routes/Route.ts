@@ -32,6 +32,8 @@ export class Routes {
             .post(this.groupController.joinGroup);
 
         // Routes data to the userController
+        app.route("/users")
+            .post(this.userController.getUserById);
         app.route("/users/create")
             .post(this.userController.createUser);
     }

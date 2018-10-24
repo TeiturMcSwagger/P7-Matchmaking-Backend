@@ -3,7 +3,22 @@ import {Request, Response} from "express";
 import {UserService} from "../../services/users/userService";
 
 export class UserController {
-    public async createUser(req: Request, res: Response){
+    public async getUserById(req: Request, res: Response) : Promise<void>{
+        const userService: UserService = new UserService();
+
+        let user_id : string = req.body.user_id;
+
+        let result : string;
+        try{
+            result = await userService.getUserById(user_id);
+        }catch(error){
+            result = error.message;
+        }
+
+        res.json(result);
+    }
+
+    public async createUser(req: Request, res: Response): Promise<void>{
         const userService: UserService = new UserService();
 
         let username = req.body.username;

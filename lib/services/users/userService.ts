@@ -12,7 +12,7 @@ export class UserService {
     }
 
     getUserById(id : string) : any {
-
+        return this.userModel.find({_id: id});
     }
 
     createUser(name: string) : any {
