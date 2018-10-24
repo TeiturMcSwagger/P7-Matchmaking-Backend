@@ -2,10 +2,10 @@ import * as mongoose from "mongoose";
 
 import { UserSchema } from "../../models/users/userModel";
 
-mongoose.connect('mongodb://138.68.83.112/test', { useNewUrlParser: true });
+mongoose.connect(process.env.MONGOURL, { useNewUrlParser: true });
 
 export class UserService {
-    private userModel : mongoose.model;
+    private userModel : mongoose.Model<any>;
 
     constructor(){
         this.userModel = mongoose.model("users", UserSchema);

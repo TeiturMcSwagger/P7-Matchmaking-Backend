@@ -4,7 +4,7 @@ import { BookService } from "../interfaces";
 import { ExampleSchema } from "../../models/example/exampleModel";
 
 mongoose.connect(
-  "mongodb://138.68.83.112/test",
+  process.env.MONGOURL,
   { useNewUrlParser: true }
 );
 
