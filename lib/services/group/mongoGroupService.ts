@@ -1,10 +1,13 @@
 import * as mongoose from "mongoose";
 
 import { GroupSchema } from "../../models/groups/groupModel";
+import { GroupService } from "../interfaces"
+import { injectable } from "inversify";
 
 mongoose.connect('mongodb://138.68.83.112/test', { useNewUrlParser: true });
 
-export class GroupService {
+@injectable()
+export class MongoGroupService implements GroupService {
     private groupsModel : mongoose.Model<any>;
 
     constructor(){
