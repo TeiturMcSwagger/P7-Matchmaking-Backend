@@ -21,29 +21,14 @@ export class GroupService {
         return await this.groupsModel.create(group);
     }
     
+    public joinGroup(group_id: string, user_id: string){
+        return this.groupsModel.updateOne({_id: group_id}, {$push: {users: user_id}});       
+    }
+
     // leaveGroup(group_id) | Checks whether the group id exist in the database
     // Out: A message, containing either a success- or reject message
-    public async leaveGroup(group_id: string, username: string): Promise<any> {
-        try{
-            return await Promise.resolve(this.groupsModel.find({"_id": group_id}, (err, data) => {
-                /*
-                    ====================================
-                    |||||| Needed Functionality ||||||||
-                    ====================================
-                    ------ Update the group, so --------
-                    ------ The user requesting  --------
-                    ------ Is deleted from the  --------
-                    ------ Group                --------
-                    ====================================
-                    ------ We should also check --------
-                    ------ Whether the username --------
-                    ------ Exist or not         --------
-                    ====================================
-                */
-               console.log(`Username: ${username}`);
-            }));
-        }catch(e){
-            return {"message": "Group does not exist", "status": 500};
-        }
+    public leaveGroup(group_id: string, user_id: string) {
+        // This finds the group, where both the group_id and user_id matches, and $pulls out the entry from the users array. 
+        return this.groupsModel.updateOne({_id: group_id}, {$pull: {users: {$in: [user_id]}}});       
     }
 }

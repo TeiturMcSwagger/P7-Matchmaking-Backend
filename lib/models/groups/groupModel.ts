@@ -6,5 +6,5 @@ export const GroupSchema = new Schema({
     name: String,
     game: String,
     maxSize: Number,
-    // users: Array<User>
+    users: Array
 });

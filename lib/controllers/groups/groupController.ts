@@ -1,6 +1,7 @@
 import {Request, Response} from "express";
 
-import {GroupService} from "../../services/group/groupService"
+import {GroupService} from "../../services/group/groupService";
+import {UserService} from "../../services/users/userService";
 
 export class GroupController {
     public async getGroups(req : Request, res : Response) 
@@ -11,7 +12,19 @@ export class GroupController {
 
     public async createGroup(req : Request, res : Response) {
         const groupService = new GroupService();
-        console.log(groupService.createGroup(req.body));
+        res.json(groupService.createGroup(req.body));
+    }
+
+    public async joinGroup(req: Request, res: Response){        
+        const groupService: GroupService = new GroupService();
+
+        // Post request group id and username attributes is stored..
+        let group_id = req.body.group_id;
+        let user_id = req.body.user_id;
+
+        // Get response from service
+        let response = groupService.joinGroup(group_id, user_id);
+        res.json(await response);
     }
 
     // leaveGroup(req, res) | Get's post data from the route, and processes the post request.
@@ -21,10 +34,10 @@ export class GroupController {
 
         // Post request group id and username attributes is stored..
         let group_id = req.body.group_id;
-        let username = req.body.username;
+        let user_id = req.body.user_id;
 
         // Get response from service
-        let response = groupService.leaveGroup(group_id, username);
+        let response = groupService.leaveGroup(group_id, user_id);
         res.json(await response);
     }
 }
