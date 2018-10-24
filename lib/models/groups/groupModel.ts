@@ -23,5 +23,5 @@ export const GroupSchema = new Schema({
         type: String,
         default: randomstring.generate
     },
-    users: Array
+    users: string[]
 });
