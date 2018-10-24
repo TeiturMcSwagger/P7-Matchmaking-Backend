@@ -19,6 +19,7 @@ export class Routes {
             .get(this.ctrlFunc.exampleRouteFunction)
             .post(this.ctrlFunc.exampleRouteFunction);
         
+
         // Groups route
         app.route("/groups")
             .get(this.groupController.getGroups)
@@ -30,11 +31,17 @@ export class Routes {
 
         app.route("/groups/join")
             .post(this.groupController.joinGroup);
+        app.route("/groups/:group_id")
+            .get(this.groupController.getGroup);
 
         // Routes data to the userController
         app.route("/users")
             .post(this.userController.getUserById);
         app.route("/users/create")
             .post(this.userController.createUser);
+
+        // Group invite link
+        app.route("/groups/:group_id/:invite_id")
+            .get(this.groupController.verifyInvite);
     }
 }

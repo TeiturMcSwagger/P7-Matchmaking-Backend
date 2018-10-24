@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
 
-import * as ExampleServices from "../../services/example/exampleService";
+import {ExampleService} from "../../services/example/exampleService";
 
 export class ExampleController {
 
@@ -9,7 +9,7 @@ export class ExampleController {
     }
 
     public async exampleRouteFunction(req : Request, res : Response) {
-        let bookService = new ExampleServices.ExampleService();
+        let bookService = new ExampleService();
         res.json(await bookService.getAllBooks());
     }
 }

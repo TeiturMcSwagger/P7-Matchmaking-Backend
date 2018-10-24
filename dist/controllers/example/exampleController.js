@@ -8,13 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const ExampleServices = require("../../services/example/exampleService");
+const exampleService_1 = require("../../services/example/exampleService");
 class ExampleController {
     constructor() {
     }
     exampleRouteFunction(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let bookService = new ExampleServices.ExampleService();
+            let bookService = new exampleService_1.ExampleService();
             res.json(yield bookService.getAllBooks());
         });
     }
