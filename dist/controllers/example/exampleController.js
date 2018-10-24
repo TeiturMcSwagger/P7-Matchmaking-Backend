@@ -11,13 +11,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const exampleService_1 = require("../../services/example/exampleService");
 class ExampleController {
     constructor() {
-        this.bookService = new exampleService_1.ExampleService();
     }
     exampleRouteFunction(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let books = new exampleService_1.ExampleService();
-            res.json(yield books.getAllBooks());
-            console.log(yield this.bookService.getAllBooks());
+            let bookService = new exampleService_1.ExampleService();
+            res.json(yield bookService.getAllBooks());
         });
     }
 }

@@ -14,7 +14,13 @@ class Routes {
             .post(this.ctrlFunc.exampleRouteFunction);
         // Groups route
         app.route("/groups")
-            .get(this.groupController.getGroups);
+            .get(this.groupController.getGroups)
+            .post(this.groupController.createGroup);
+        app.route("/groups/:group_id")
+            .get(this.groupController.getGroup);
+        // Group invite link
+        app.route("/groups/:group_id/:invite_id")
+            .get(this.groupController.verifyInvite);
     }
 }
 exports.Routes = Routes;

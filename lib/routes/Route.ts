@@ -1,12 +1,12 @@
-import {ExampleController} from "../controllers/example/exampleController";
+import { ExampleController } from "../controllers/example/exampleController";
 
-import {GroupController} from "../controllers/groups/groupController"
+import { GroupController } from "../controllers/groups/groupController"
 
 export class Routes {
     private ctrlFunc: ExampleController;
     private groupController: GroupController;
 
-    constructor(){
+    constructor() {
         this.ctrlFunc = new ExampleController();
         this.groupController = new GroupController();
     }
@@ -19,7 +19,7 @@ export class Routes {
 
         // Groups route
         app.route("/groups")
-            .get(this.groupController.getGroups)
+            .get(this.groupController.getAllGroups)
             .post(this.groupController.createGroup);
 
         app.route("/groups/:group_id")

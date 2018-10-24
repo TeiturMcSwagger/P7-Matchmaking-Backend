@@ -13,15 +13,32 @@ const groupModel_1 = require("../../models/groups/groupModel");
 mongoose.connect('mongodb://138.68.83.112/test', { useNewUrlParser: true });
 class GroupService {
     constructor() {
-        this.groupModel = mongoose.model("groups", groupModel_1.GroupSchema);
-        console.log("Groups constructed!");
+        this.groupsModel = mongoose.model("groups", groupModel_1.GroupSchema);
     }
-    getAllGroups() {
+    getGroups() {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("Returning groups!");
-            return yield this.groupModel.find({}, (err, data) => {
+            return yield this.groupsModel.find({}, (err, data) => {
                 return data;
             });
+        });
+    }
+    createGroup(group) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.groupsModel.create(group);
+        });
+    }
+    getGroup(group_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let group;
+            try {
+                group = yield this.groupsModel.findById(group_id, function (err, adventure) { });
+            }
+            catch (e) {
+                group = null;
+            }
+            finally {
+                return group;
+            }
         });
     }
 }

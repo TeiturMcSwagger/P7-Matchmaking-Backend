@@ -5,32 +5,42 @@ import { GroupSchema } from "../../models/groups/groupModel";
 mongoose.connect('mongodb://138.68.83.112/test', { useNewUrlParser: true });
 
 export class GroupService {
-    private groupsModel;
+    private groupModel;
 
-    constructor(){
-        this.groupsModel = mongoose.model("groups", GroupSchema);
+    constructor() {
+        this.groupModel = mongoose.model("group", GroupSchema);
     }
 
     public async getGroups() {
-        return await this.groupsModel.find({}, (err, data) => {
-            return data;
-        });
+        let groups;
+        try {
+            groups = await this.groupModel.find({}, (err, data) => { })
+            console.log(groups)
+        }
+        catch (e) {
+            groups = null
+        }
+        finally {
+            return groups;
+        }
     }
 
     public async createGroup(group) {
-        return await this.groupsModel.create(group);
+        return await this.groupModel.create(group);
     }
 
-    public async getGroup(group_id : String) {
+    public async getGroup(group_id: String) {
         let group;
-        try{
-            group = await this.groupsModel.findById(group_id, function (err, adventure) {});
+        try {
+            group = await this.groupModel.findById(group_id, function (err, adventure) { });
         }
-        catch(e){
+        catch (e) {
             group = null;
         }
-        finally{
+        finally {
             return group;
-        }        
+        }
     }
+
+
 }
