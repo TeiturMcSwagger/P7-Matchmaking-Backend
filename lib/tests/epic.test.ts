@@ -1,4 +1,5 @@
 import { ExampleController } from "controllers/example/exampleController";
+import "jest"
 
 function isTrue(b: boolean) {
     return b;

@@ -1,4 +1,16 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -9,30 +21,39 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const response_1 = require("../../response/response");
-const groupService_1 = require("../../services/group/groupService");
-class GroupController {
+const inversify_express_utils_1 = require("inversify-express-utils");
+const inversify_1 = require("inversify");
+const interfaces_1 = require("../../services/interfaces");
+let GroupController = class GroupController {
+    constructor(groupService) {
+        this.groupService = groupService;
+    }
     getGroups(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const groupService = new groupService_1.GroupService();
-            res.json(yield groupService.getGroups());
+            res.json(yield this.groupService.getGroups());
         });
     }
     createGroup(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const groupService = new groupService_1.GroupService();
-            res.json(groupService.createGroup(req.body));
+            try {
+                const group = req.body;
+                const result = yield this.groupService.createGroup(group);
+                res.json(result);
+            }
+            catch (e) {
+                res.json(e.message);
+            }
         });
     }
     joinGroup(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const groupService = new groupService_1.GroupService();
             // Post request group id and username attributes is stored..
             const group_id = req.body.group_id;
             const user_id = req.body.user_id;
             // Get response from service
             let result;
             try {
-                result = yield groupService.joinGroup(group_id, user_id);
+                result = yield this.groupService.joinGroup(group_id, user_id);
             }
             catch (error) {
                 result = error.message;
@@ -44,14 +65,13 @@ class GroupController {
     // Out: Response message from the service. 
     leaveGroup(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const groupService = new groupService_1.GroupService();
             // Post request group id and username attributes is stored..
             let group_id = req.body.group_id;
             let user_id = req.body.user_id;
             // Get response from service
             let result;
             try {
-                result = yield groupService.leaveGroup(group_id, user_id);
+                result = yield this.groupService.leaveGroup(group_id, user_id);
             }
             catch (error) {
                 result = error.message;
@@ -62,8 +82,7 @@ class GroupController {
     }
     getGroup(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const groupService = new groupService_1.GroupService();
-            var group = yield groupService.getGroup(req.params.group_id);
+            var group = yield this.groupService.getGroup(req.params.group_id);
             var response = new response_1.Response(group);
             // Invalid group id
             if (group == null) {
@@ -77,13 +96,12 @@ class GroupController {
     verifyInvite(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             // 1) Check if a group exists with id 'group_id'
-            const groupService = new groupService_1.GroupService();
-            var group = yield groupService.getGroup(req.params.group_id);
+            var group = yield this.groupService.getGroup(req.params.group_id);
             var response = new response_1.Response(group);
             // TODO: Correctly/appropriately handle incorrect group ids
             // What should we send as response? How should we handle it in the frontend?
             if (group == null) {
-                response.error = 'No groups exist with id ' + req.params.group_id;
+                response.error = "No groups exist with id " + req.params.group_id;
                 response.statuscode = 1;
                 res.send(response);
             }
@@ -91,7 +109,8 @@ class GroupController {
             // TODO: Correctly/appropriately handle incorrect invite ids
             // Same as above: What do we send, how do we handle it in the frontend?
             if (group.invite_id != req.params.invite_id) {
-                response.error = 'Invalid invite id for group with id ' + req.params.group_id;
+                response.error =
+                    "Invalid invite id for group with id " + req.params.group_id;
                 response.statuscode = 2;
                 res.send(response);
             }
@@ -104,6 +123,47 @@ class GroupController {
             res.send(response);
         });
     }
-}
+};
+__decorate([
+    inversify_express_utils_1.httpGet("/"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], GroupController.prototype, "getGroups", null);
+__decorate([
+    inversify_express_utils_1.httpPost("/"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], GroupController.prototype, "createGroup", null);
+__decorate([
+    inversify_express_utils_1.httpPost("/join"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], GroupController.prototype, "joinGroup", null);
+__decorate([
+    inversify_express_utils_1.httpPost("/leave"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], GroupController.prototype, "leaveGroup", null);
+__decorate([
+    inversify_express_utils_1.httpGet("/:group_id"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], GroupController.prototype, "getGroup", null);
+__decorate([
+    inversify_express_utils_1.httpGet("/:group_id/:invite_id"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], GroupController.prototype, "verifyInvite", null);
+GroupController = __decorate([
+    inversify_express_utils_1.controller("/groups"),
+    __param(0, inversify_1.inject(interfaces_1.TYPES.GroupService)),
+    __metadata("design:paramtypes", [Object])
+], GroupController);
 exports.GroupController = GroupController;
 //# sourceMappingURL=groupController.js.map

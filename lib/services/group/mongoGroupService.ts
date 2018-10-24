@@ -1,10 +1,13 @@
 import * as mongoose from "mongoose";
 
 import { GroupSchema } from "../../models/groups/groupModel";
+import { GroupService } from "../interfaces"
+import { injectable } from "inversify";
 
 mongoose.connect('mongodb://138.68.83.112/test', { useNewUrlParser: true });
 
-export class GroupService {
+@injectable()
+export class MongoGroupService implements GroupService {
     private groupsModel : mongoose.Model<any>;
 
     constructor(){
@@ -32,13 +35,13 @@ export class GroupService {
         }        
     }
     
-    public joinGroup(group_id: string, user_id: string){
+    public joinGroup(group_id: string, user_id: string) : any{
         return this.groupsModel.updateOne({_id: group_id}, {$push: {users: user_id}});       
     }
 
     // leaveGroup(group_id) | Checks whether the group id exist in the database
     // Out: A message, containing either a success- or reject message
-    public leaveGroup(group_id: string, user_id: string) {
+    public leaveGroup(group_id: string, user_id: string) : any {
         // This finds the group, where both the group_id and user_id matches, and $pulls out the entry from the users array. 
         return this.groupsModel.updateOne({_id: group_id}, {$pull: {users: {$in: [user_id]}}});       
     }
