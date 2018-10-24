@@ -3,7 +3,7 @@ import * as mongoose from "mongoose";
 import { GroupSchema } from "../../models/groups/groupModel";
 import { GroupService } from "../interfaces"
 import { injectable } from "inversify";
-
+import * as randomstring from "randomstring";
 mongoose.connect('mongodb://138.68.83.112/test', { useNewUrlParser: true });
 
 @injectable()
@@ -19,6 +19,7 @@ export class MongoGroupService implements GroupService {
     }
 
     public createGroup(group): Promise<any> {
+        group.invite_id = randomstring.generate();
         return this.groupsModel.create(group);
     }
 
