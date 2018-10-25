@@ -9,9 +9,15 @@ export interface GroupService {
     joinGroup(group_id : String, user_id : String) : any;
 }
 
+export interface UserService {
+    getUserById(id : string) : any,
+    createUser(name: string) : any
+}
+
 const TYPES = {
     BookService: Symbol.for("BookService"),
     GroupService: Symbol.for("GroupService"),
+    UserService: Symbol.for("UserService")
 };
 
 export { TYPES };

@@ -1,16 +1,33 @@
-import {Request, Response} from "express";
+import { Response as BEResponse } from "../../response/response";
+import { Request, Response } from "express";
+import {
+  interfaces,
+  controller,
+  httpGet,
+  httpPost,
+  httpDelete,
+  request,
+  queryParam,
+  response,
+  requestParam
+} from "inversify-express-utils";
+import { injectable, inject } from "inversify";
+import { GroupService, TYPES, UserService } from "../../services/interfaces";
 
-import {UserService} from "../../services/users/userService";
+@controller("/users")
+export class UserController implements interfaces.Controller {
 
-export class UserController {
+    constructor(@inject(TYPES.UserService) private userService: UserService) {}
+
+
+    @httpGet("/")
     public async getUserById(req: Request, res: Response) : Promise<void>{
-        const userService: UserService = new UserService();
 
         let user_id : string = req.body.user_id;
 
         let result : string;
         try{
-            result = await userService.getUserById(user_id);
+            result = await this.userService.getUserById(user_id);
         }catch(error){
             result = error.message;
         }
@@ -18,15 +35,14 @@ export class UserController {
         res.json(result);
     }
 
+    @httpPost("/")
     public async createUser(req: Request, res: Response): Promise<void>{
-        const userService: UserService = new UserService();
-
         let username = req.body.username;
 
         let result;
         try {
             // This is the created user response
-            result =  await userService.createUser(username);            
+            result =  await this.userService.createUser(username);            
         } catch (error) {
             // This is the error response
             result = error.message;
