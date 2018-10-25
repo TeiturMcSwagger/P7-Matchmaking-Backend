@@ -2,6 +2,7 @@
 import * as express from "express";
 import * as os from "os";
 import logger from "./logger";
+import * as morgan from "morgan";
 import { Application } from "express";
 import "../controllers/exampleController"
 import "reflect-metadata";
@@ -15,14 +16,40 @@ import { AppContainer } from "./inversify.config";
 
 export default class App {
   public app: express.Application;
-  private server : InversifyExpressServer ;
+  private server: InversifyExpressServer;
   constructor() {
     this.app = express();
     this.config();
-    this.server = new InversifyExpressServer(AppContainer, null, null, this.app);
-    this.app = this.server.build();
+    this.server = new InversifyExpressServer(
+      AppContainer,
+      null,
+      null,
+      this.app
+    );
+
+    this.app = this.server
+      .setConfig(this.configFunc)
+      .setErrorConfig(this.errorConfigFunc)
+      .build();
 
     // Init routes with app
+  }
+  configFunc(app: any): void {
+    var logger = morgan("combined");
+    app.use(logger);
+  }
+  errorConfigFunc(app: any): void {
+    app.use(
+      (
+        err: Error,
+        request: express.Request,
+        response: express.Response,
+        next: express.NextFunction
+      ) => {
+        logger.info(err.stack);
+        response.status(500).send("Something went wrong");
+      }
+    );
   }
 
   listen(p: string | number = process.env.PORT): Application {
