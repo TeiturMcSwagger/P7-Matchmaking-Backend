@@ -3,6 +3,7 @@ import './common/env';
 import "reflect-metadata";
 import "./controllers/example/exampleController"
 import "./controllers/groups/groupController"
+import "./controllers/users/userController"
 
 
 import App from './common/app';

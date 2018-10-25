@@ -1,18 +1,25 @@
 import * as mongoose from "mongoose";
 
-import { UserSchema } from "../../models/users/userModel";
+import { UserSchema, IUser } from "../../models/users/userModel";
+import { injectable } from "inversify";
+import { UserService } from  "../interfaces";
 
 mongoose.connect(process.env.MONGOURL, { useNewUrlParser: true });
 
-export class UserService {
-    private userModel : mongoose.Model<any>;
+@injectable()
+export class MongoUserService implements UserService {
+    private userModel : mongoose.Model<IUser>;
 
     constructor(){
-        this.userModel = mongoose.model("users", UserSchema);
+        this.userModel = mongoose.model<IUser>("users", UserSchema);
     }
 
-    getUserById(id : string) : any {
-        return this.userModel.find({_id: id});
+    async getUserById(id: string): Promise<IUser> {
+        return await this.userModel.findById(id);
+    }
+
+    async getAllUsers(): Promise<IUser[]> {
+        return await this.userModel.find();
     }
 
     createUser(name: string) : any {

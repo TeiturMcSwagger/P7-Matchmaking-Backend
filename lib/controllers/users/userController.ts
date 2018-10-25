@@ -1,14 +1,27 @@
 import {Request, Response} from "express";
 
-import {UserService} from "../../services/users/userService";
+import {MongoUserService} from "../../services/users/userService";
+import { controller, httpGet, interfaces } from "inversify-express-utils";
+import { inject } from "inversify";
+import { TYPES, UserService } from "../../services/interfaces";
 
-export class UserController {
+@controller("/users")
+export class UserController implements interfaces.Controller {
+    constructor(@inject(TYPES.UserService) private userService: UserService) {}
+
+    @httpGet("/")
+    public async getAllUsers(req: Request, res: Response) {
+        const users = await this.userService.getAllUsers()
+        console.log("USERSSS", users);
+        res.send(users);
+    }
+
     public async getUserById(req: Request, res: Response) : Promise<void>{
-        const userService: UserService = new UserService();
+        const userService: MongoUserService = new MongoUserService();
 
         let user_id : string = req.body.user_id;
 
-        let result : string;
+        let result;
         try{
             result = await userService.getUserById(user_id);
         }catch(error){
@@ -19,7 +32,7 @@ export class UserController {
     }
 
     public async createUser(req: Request, res: Response): Promise<void>{
-        const userService: UserService = new UserService();
+        const userService: MongoUserService = new MongoUserService();
 
         let username = req.body.username;
 
