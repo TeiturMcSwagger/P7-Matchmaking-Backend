@@ -1,9 +1,9 @@
 import {Request, Response} from "express";
 
-import {MongoUserService} from "../../services/users/userService";
+import {MongoUserService} from "../services/userService";
 import { controller, httpGet, interfaces } from "inversify-express-utils";
 import { inject } from "inversify";
-import { TYPES, UserService } from "../../services/interfaces";
+import { TYPES, UserService } from "../services/interfaces";
 
 @controller("/users")
 export class UserController implements interfaces.Controller {

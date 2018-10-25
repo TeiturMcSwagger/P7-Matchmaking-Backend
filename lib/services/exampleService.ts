@@ -1,7 +1,7 @@
 import * as mongoose from "mongoose";
 import { injectable, inject } from "inversify";
-import { BookService } from "../interfaces";
-import { ExampleSchema } from "../../models/example/exampleModel";
+import { BookService } from "./interfaces";
+import { ExampleSchema } from "../models/exampleModel";
 
 mongoose.connect(
   process.env.MONGOURL,

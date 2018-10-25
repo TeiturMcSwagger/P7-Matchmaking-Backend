@@ -28,3 +28,11 @@ export const GroupSchema = new Schema({
         default: []
     },
 });
+
+export interface IGroup extends mongoose.Document {
+    name: String;
+    game: String;
+    maxSize: Number;
+    users: String[];
+    invite_id: String;
+}

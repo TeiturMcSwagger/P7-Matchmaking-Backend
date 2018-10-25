@@ -1,8 +1,8 @@
 import { Container } from "inversify";
 import {BookService, GroupService, TYPES, UserService} from "../services/interfaces"
-import {ExampleService} from "../services/example/exampleService"
-import {MongoGroupService} from "../services/group/mongoGroupService"
-import { MongoUserService } from "../services/users/userService";
+import {ExampleService} from "../services/exampleService"
+import {MongoGroupService} from "../services/mongoGroupService"
+import { MongoUserService } from "../services/userService";
 
 const AppContainer = new Container();
 AppContainer.bind<BookService>(TYPES.BookService).to(ExampleService)

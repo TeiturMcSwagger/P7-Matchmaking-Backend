@@ -3,7 +3,7 @@ import * as express from "express";
 import * as os from "os";
 import logger from "./logger";
 import { Application } from "express";
-import "../controllers/example/exampleController"
+import "../controllers/exampleController"
 import "reflect-metadata";
 import * as bodyParser from "body-parser";
 import {
