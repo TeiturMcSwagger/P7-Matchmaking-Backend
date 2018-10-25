@@ -4,7 +4,7 @@ import * as os from "os";
 import logger from "./logger";
 import * as morgan from "morgan";
 import { Application } from "express";
-import "../controllers/example/exampleController";
+import "../controllers/exampleController"
 import "reflect-metadata";
 import * as bodyParser from "body-parser";
 import {

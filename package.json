@@ -20,6 +20,7 @@
     "inversify": "^5.0.1",
     "inversify-express-utils": "^6.2.0",
     "mongoose": "^5.3.2",
+    "npm": "^6.4.1",
     "morgan": "^1.9.1",
     "pino": "^5.8.0",
     "randomstring": "^1.1.5",

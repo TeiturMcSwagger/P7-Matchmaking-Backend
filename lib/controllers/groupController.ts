@@ -1,4 +1,4 @@
-import { Response as BEResponse } from "../../response/response";
+import { Response as BEResponse } from "../response";
 import { Request, Response } from "express";
 import {
   interfaces,
@@ -12,11 +12,12 @@ import {
   requestParam
 } from "inversify-express-utils";
 import { injectable, inject } from "inversify";
-import { GroupService, TYPES } from "../../services/interfaces";
+import { GroupService, TYPES, UserService } from "../services/interfaces";
 
 @controller("/groups")
 export class GroupController implements interfaces.Controller {
-  constructor(@inject(TYPES.GroupService) private groupService: GroupService) {}
+  constructor(@inject(TYPES.GroupService) private groupService: GroupService,
+              @inject(TYPES.UserService) private userService: UserService) {}
 
   @httpGet("/")
   public async getGroups(req: Request, res: Response) {
@@ -43,6 +44,18 @@ export class GroupController implements interfaces.Controller {
         // Get response from service
         let result: string;
         try {
+            // Check if user is in group
+            const group = await this.groupService.getGroup(group_id);
+            if(group.users.indexOf(user_id) > -1) {
+                throw new Error(`The user with the userID: ${user_id} is already in the group: ${group_id}.`);
+
+            }
+            // Check if user_id is a user
+            const user = await this.userService.getUserById(user_id);
+            if(user == null) {
+                throw new Error(`The user with the userID: ${user_id} was not found.`);
+            }
+            
             result = await this.groupService.joinGroup(group_id, user_id);
         } catch (error) {
             result = error.message;
