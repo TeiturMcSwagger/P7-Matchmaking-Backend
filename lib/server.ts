@@ -1,8 +1,9 @@
 /* Debugging environment */
 import './common/env';
 import "reflect-metadata";
-import "./controllers/example/exampleController"
-import "./controllers/groups/groupController"
+import "./controllers/exampleController"
+import "./controllers/groupController"
+import "./controllers/userController"
 
 
 import App from './common/app';

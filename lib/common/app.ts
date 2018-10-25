@@ -6,7 +6,7 @@ import * as morgan from "morgan";
 import { Application } from "express";
 import * as swagger from "swagger-express-ts";
 import { SwaggerDefinitionConstant } from "swagger-express-ts";
-import "../controllers/example/exampleController";
+import "../controllers/exampleController";
 import "reflect-metadata";
 import * as bodyParser from "body-parser";
 import {
