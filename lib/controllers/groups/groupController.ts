@@ -11,65 +11,85 @@ import {
   response,
   requestParam
 } from "inversify-express-utils";
+import { ApiPath, ApiOperationGet, ApiOperationPost } from "swagger-express-ts";
+import { SwaggerDefinitionConstant } from "swagger-express-ts";
 import { injectable, inject } from "inversify";
 import { GroupService, TYPES } from "../../services/interfaces";
 
+
+
+@ApiPath({
+  path: "/groups",
+  name: "Group",
+  security: { basicAuth: [] }
+})
 @controller("/groups")
 export class GroupController implements interfaces.Controller {
   constructor(@inject(TYPES.GroupService) private groupService: GroupService) {}
 
+  @ApiOperationGet({
+    description: "Get group objects list",
+    summary: "Get group list",
+    responses: {
+      200: {
+        type: SwaggerDefinitionConstant.Response.Type.ARRAY,
+      }
+    },
+    security: {
+      apiKeyHeader: []
+    }
+  })
   @httpGet("/")
   public async getGroups(req: Request, res: Response) {
     res.json(await this.groupService.getGroups());
   }
 
-    @httpPost("/")
-    public async createGroup(req:  Request, res: Response) {
-        try {
-            const group = req.body;
-            const result = await this.groupService.createGroup(group);
-            res.json(result);
-        } catch (e) {
-            res.json(e.message);
-        }
+  @httpPost("/")
+  public async createGroup(req: Request, res: Response) {
+    try {
+      const group = req.body;
+      const result = await this.groupService.createGroup(group);
+      res.json(result);
+    } catch (e) {
+      res.json(e.message);
+    }
+  }
+
+  @httpPost("/join")
+  public async joinGroup(req: Request, res: Response): Promise<void> {
+    // Post request group id and username attributes is stored..
+    const group_id: string = req.body.group_id;
+    const user_id: string = req.body.user_id;
+
+    // Get response from service
+    let result: string;
+    try {
+      result = await this.groupService.joinGroup(group_id, user_id);
+    } catch (error) {
+      result = error.message;
     }
 
-    @httpPost("/join")
-    public async joinGroup(req: Request, res: Response) : Promise<void>{        
-        // Post request group id and username attributes is stored..
-        const group_id : string = req.body.group_id;
-        const user_id : string = req.body.user_id;
+    res.json(result);
+  }
 
-        // Get response from service
-        let result: string;
-        try {
-            result = await this.groupService.joinGroup(group_id, user_id);
-        } catch (error) {
-            result = error.message;
-        }
-        
-        res.json(result);
+  // leaveGroup(req, res) | Get's post data from the route, and processes the post request.
+  // Out: Response message from the service.
+  @httpPost("/leave")
+  public async leaveGroup(req: Request, res: Response): Promise<void> {
+    // Post request group id and username attributes is stored..
+    let group_id: string = req.body.group_id;
+    let user_id: string = req.body.user_id;
+
+    // Get response from service
+    let result;
+    try {
+      result = await this.groupService.leaveGroup(group_id, user_id);
+    } catch (error) {
+      result = error.message;
     }
-
-    // leaveGroup(req, res) | Get's post data from the route, and processes the post request.
-    // Out: Response message from the service. 
-    @httpPost("/leave")
-    public async leaveGroup(req: Request, res: Response) : Promise<void>{      
-
-        // Post request group id and username attributes is stored..
-        let group_id: string = req.body.group_id;
-        let user_id: string = req.body.user_id;
-        
-        // Get response from service
-        let result;
-        try {
-            result = await this.groupService.leaveGroup(group_id, user_id);
-        } catch (error) {
-            result = error.message;
-        }
-        // Return result
-        res.json(result);
-    }
+    // Return result
+    res.json(result);
+  }
 
   @httpGet("/:group_id")
   public async getGroup(req: Request, res: Response) {

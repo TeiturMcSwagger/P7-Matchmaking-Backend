@@ -4,6 +4,8 @@ import * as os from "os";
 import logger from "./logger";
 import * as morgan from "morgan";
 import { Application } from "express";
+import * as swagger from "swagger-express-ts";
+import { SwaggerDefinitionConstant } from "swagger-express-ts";
 import "../controllers/example/exampleController";
 import "reflect-metadata";
 import * as bodyParser from "body-parser";
@@ -17,6 +19,7 @@ import { AppContainer } from "./inversify.config";
 export default class App {
   public app: express.Application;
   private server: InversifyExpressServer;
+
   constructor() {
     this.app = express();
     this.config();
@@ -31,13 +34,30 @@ export default class App {
       .setConfig(this.configFunc)
       .setErrorConfig(this.errorConfigFunc)
       .build();
-
-    // Init routes with app
   }
+  //Is used by inversify to setup our "default" logger (morgan) and swagger
   configFunc(app: any): void {
     var logger = morgan("combined");
     app.use(logger);
+
+    app.use(
+      "/api-docs/swagger/assets",
+      express.static("node_modules/swagger-ui-dist")
+    );
+    app.use("/swagger", express.static("lib/common/swagger"));
+    app.use(
+      swagger.express({
+        definition: {
+          info: {
+            title: "Matchmaking P7",
+            version: "1.0"
+          }
+          // Models can be defined here
+        }
+      })
+    );
   }
+  //Prints error to input (dev -> terminal, prod -> file)
   errorConfigFunc(app: any): void {
     app.use(
       (
