@@ -1,24 +1,86 @@
 import { Response as BEResponse } from "../../response/response";
-
 import { Request, Response } from "express";
+import {
+    interfaces,
+    controller,
+    httpGet,
+    httpPost,
+    httpDelete,
+    request,
+    queryParam,
+    response,
+    requestParam
+} from "inversify-express-utils";
+import { injectable, inject } from "inversify";
+import { GroupService, TYPES } from "../../services/interfaces";
 
-import { GroupService } from "../../services/group/groupService";
+@controller("/groups")
+export class GroupController implements interfaces.Controller {
+    constructor(@inject(TYPES.GroupService) private groupService: GroupService) { }
 
-
-export class GroupController {
+    @httpGet("/")
     public async getGroups(req: Request, res: Response) {
-        const groupService = new GroupService();
-        res.json(await groupService.getGroups());
+        // const groupService = new GroupService();
+        var groups = await this.groupService.getGroups();
+        var response = new BEResponse(groups);
+        if (groups == null) {
+            response.error = "No groups available";
+            response.statuscode = 1;
+        };
+        res.send(response);
     }
 
+    @httpPost("/")
     public async createGroup(req: Request, res: Response) {
-        const groupService = new GroupService();
-        console.log(groupService.createGroup(req.body));
+        try {
+            const group = req.body;
+            const result = await this.groupService.createGroup(group);
+            res.json(result);
+        } catch (e) {
+            res.json(e.message);
+        }
     }
 
+    @httpPost("/join")
+    public async joinGroup(req: Request, res: Response): Promise<void> {
+        // Post request group id and username attributes is stored..
+        const group_id: string = req.body.data.group_id;
+        const user_id: string = req.body.data.user_id;
+
+        // Get response from service
+        const result = await this.groupService.joinGroup(group_id, user_id);
+        let response = new BEResponse(result);
+        if (response.data === null) {
+            response.statuscode = 28;
+            response.error = "Could not join group with id " + group_id + " -- user id: " + user_id;
+        }
+
+        res.send(response);
+    }
+
+    // leaveGroup(req, res) | Get's post data from the route, and processes the post request.
+    // Out: Response message from the service. 
+    @httpPost("/leave")
+    public async leaveGroup(req: Request, res: Response): Promise<void> {
+
+        // Post request group id and username attributes is stored..
+        let group_id: string = req.body.group_id;
+        let user_id: string = req.body.user_id;
+
+        // Get response from service
+        let result;
+        try {
+            result = await this.groupService.leaveGroup(group_id, user_id);
+        } catch (error) {
+            result = error.message;
+        }
+        // Return result
+        res.json(result);
+    }
+
+    @httpGet("/:group_id")
     public async getGroup(req: Request, res: Response) {
-        const groupService = new GroupService();
-        var group = await groupService.getGroup(req.params.group_id);
+        var group = await this.groupService.getGroup(req.params.group_id);
         var response = new BEResponse(group);
 
         // Invalid group id
@@ -31,27 +93,16 @@ export class GroupController {
         res.send(response);
     }
 
-    public async getAllGroups(req: Request, res: Response) {
-        const groupService = new GroupService();
-        var groups = await groupService.getGroups();
-        var response = new BEResponse(groups);
-        if (groups == null) {
-            response.error = "No groups available";
-            response.statuscode = 1;
-        };
-        res.send(response);
-    }
-
+    @httpGet("/:group_id/:invite_id")
     public async verifyInvite(req: Request, res: Response) {
         // 1) Check if a group exists with id 'group_id'
-        const groupService = new GroupService();
-        var group = await groupService.getGroup(req.params.group_id);
+        var group = await this.groupService.getGroup(req.params.group_id);
         var response = new BEResponse(group);
 
         // TODO: Correctly/appropriately handle incorrect group ids
         // What should we send as response? How should we handle it in the frontend?
         if (group == null) {
-            response.error = 'No groups exist with id ' + req.params.group_id;
+            response.error = "No groups exist with id " + req.params.group_id;
             response.statuscode = 1;
             res.send(response);
         }
@@ -60,7 +111,8 @@ export class GroupController {
         // TODO: Correctly/appropriately handle incorrect invite ids
         // Same as above: What do we send, how do we handle it in the frontend?
         if (group.invite_id != req.params.invite_id) {
-            response.error = 'Invalid invite id for group with id ' + req.params.group_id;
+            response.error =
+                "Invalid invite id for group with id " + req.params.group_id;
             response.statuscode = 2;
             res.send(response);
         }

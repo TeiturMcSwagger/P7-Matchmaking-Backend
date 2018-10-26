@@ -5,5 +5,6 @@ before_install:
 - npm install typescript
 script:
 - npm run build
+- npm t
 notifications:
   slack: p7-iot-aau:hHKmtDlYe6LKo4TjuilHR3P2
