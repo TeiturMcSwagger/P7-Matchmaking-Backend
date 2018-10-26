@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
 
-import { controller, httpGet, interfaces } from "inversify-express-utils";
+import { controller, httpGet, interfaces, httpPost } from "inversify-express-utils";
 import { inject } from "inversify";
 import { TYPES, UserService } from "../services/interfaces";
 
@@ -15,9 +15,10 @@ export class UserController implements interfaces.Controller {
         res.send(users);
     }
 
+    @httpGet("/:user_id")
     public async getUserById(req: Request, res: Response) : Promise<void>{
 
-        let user_id : string = req.body.user_id;
+        let user_id : string = req.params.group_id;
 
         let result;
         try{
@@ -29,6 +30,7 @@ export class UserController implements interfaces.Controller {
         res.json(result);
     }
 
+    @httpPost("/create")
     public async createUser(req: Request, res: Response): Promise<void>{
 
         let username = req.body.username;
