@@ -1,0 +1,379 @@
+{
+	"basePath": "",
+	"consumes": [
+		"application/json"
+	],
+	"definitions": {
+		"IUser": {
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"created": {
+					"type": "string",
+					"format": "date-time"
+				}
+			},
+			"required": [
+				"name",
+				"created"
+			],
+			"type": "object"
+		},
+		"IGroup": {
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"game": {
+					"type": "string"
+				},
+				"maxSize": {
+					"type": "number",
+					"format": "double"
+				},
+				"users": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"invite_id": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"name",
+				"game",
+				"maxSize",
+				"users",
+				"invite_id"
+			],
+			"type": "object"
+		},
+		"IGroupUser": {
+			"properties": {
+				"user_id": {
+					"type": "string"
+				},
+				"group_id": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"user_id",
+				"group_id"
+			],
+			"type": "object"
+		},
+		"IResponseIGroup": {
+			"properties": {
+				"statuscode": {
+					"type": "number",
+					"format": "double"
+				},
+				"error": {
+					"type": "string"
+				},
+				"data": {
+					"$ref": "#/definitions/IGroup"
+				}
+			},
+			"required": [
+				"statuscode",
+				"error",
+				"data"
+			],
+			"type": "object"
+		}
+	},
+	"info": {
+		"title": "p7-matchmaking",
+		"version": "1.0.0",
+		"description": "uni project",
+		"license": {
+			"name": "MIT"
+		}
+	},
+	"paths": {
+		"/users": {
+			"get": {
+				"operationId": "GetAllUsers",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/IUser"
+							}
+						}
+					}
+				},
+				"tags": [
+					"users"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/users/{user_id}": {
+			"get": {
+				"operationId": "GetUserById",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"$ref": "#/definitions/IUser"
+						}
+					}
+				},
+				"tags": [
+					"users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "user_id",
+						"required": true,
+						"type": "string"
+					}
+				]
+			}
+		},
+		"/users/create": {
+			"post": {
+				"operationId": "CreateUser",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/IUser"
+						}
+					}
+				]
+			}
+		},
+		"/groups": {
+			"get": {
+				"operationId": "GetGroups",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/IGroup"
+							}
+						}
+					}
+				},
+				"tags": [
+					"groups"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateGroup",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"type": "object"
+						}
+					}
+				},
+				"tags": [
+					"groups"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/IGroup"
+						}
+					}
+				]
+			}
+		},
+		"/groups/join": {
+			"post": {
+				"operationId": "JoinGroup",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"type": "object"
+						}
+					}
+				},
+				"tags": [
+					"groups"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/IGroupUser"
+						}
+					}
+				]
+			}
+		},
+		"/groups/leave": {
+			"post": {
+				"operationId": "LeaveGroup",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"type": "object"
+						}
+					}
+				},
+				"tags": [
+					"groups"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/IGroupUser"
+						}
+					}
+				]
+			}
+		},
+		"/groups/{group_id}": {
+			"get": {
+				"operationId": "GetGroup",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"$ref": "#/definitions/IResponseIGroup"
+						}
+					}
+				},
+				"tags": [
+					"groups"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "group_id",
+						"required": true,
+						"type": "string"
+					}
+				]
+			}
+		},
+		"/groups/{group_id}/{invite_id}": {
+			"get": {
+				"operationId": "VerifyInvite",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"$ref": "#/definitions/IResponseIGroup"
+						}
+					}
+				},
+				"tags": [
+					"groups"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "group_id",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "path",
+						"name": "invite_id",
+						"required": true,
+						"type": "string"
+					}
+				]
+			}
+		},
+		"/": {
+			"get": {
+				"operationId": "ExampleRouteFunction",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"type": "object"
+						}
+					}
+				},
+				"tags": [
+					"example"
+				],
+				"security": [],
+				"parameters": []
+			}
+		}
+	},
+	"produces": [
+		"application/json"
+	],
+	"swagger": "2.0",
+	"securityDefinitions": {}
+}

@@ -1,12 +1,8 @@
 /* Debugging environment */
-import './common/env';
+import "./common/env";
 import "reflect-metadata";
-import "./controllers/exampleController"
-import "./controllers/groupController"
-import "./controllers/userController"
 
-
-import App from './common/app';
+import App from "./common/app";
 
 const port = process.env.PORT;
 
