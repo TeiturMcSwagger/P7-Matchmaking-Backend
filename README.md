@@ -39,7 +39,7 @@ Will produce ./build/routes.ts which is the mapping from our code to something e
 Tsoa also allows us to abstract away request and response parameters, and instead work with method arguments (body/parameters) and returns (response).
 
 See the existing controllers for usage of the decorators, and how to inject dependencies. 
-In order to make new depencies available for DI, follow the same pattern in /lib/common/inversify.config.ts.
+In order to make new dependencies available for DI, follow the same pattern in /lib/common/inversify.config.ts.
 
 IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT
 
