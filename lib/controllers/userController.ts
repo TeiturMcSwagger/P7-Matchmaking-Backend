@@ -35,6 +35,7 @@ export class UserController extends Controller {
   @Get("{user_id}")
   public async getUserById(user_id: string): Promise<IUser> {
     let result;
+
     try {
       result = await this.userService.getUserById(user_id);
     } catch (error) {
@@ -59,4 +60,5 @@ export class UserController extends Controller {
     // Send json response
     return result;
   }
+
 }
