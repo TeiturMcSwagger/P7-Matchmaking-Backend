@@ -4,7 +4,7 @@
   "description": "uni project",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "npm run build:tsoa && tsc",
     "clean": "rm -rf ./dist && rm -rf ./build && mkdir build",
     "build:tsoa": "npm run clean && npm run build:routes && npm run build:swagger",
     "build:swagger": "tsoa swagger",
