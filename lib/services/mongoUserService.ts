@@ -2,7 +2,7 @@ import * as mongoose from "mongoose";
 
 import { UserSchema, IUser } from "../models/userModel";
 import { injectable } from "inversify";
-import { UserService } from  "./interfaces";
+import { UserService, ServiceResponse } from  "./interfaces";
 
 mongoose.connect(process.env.MONGOURL, { useNewUrlParser: true });
 
@@ -14,21 +14,49 @@ export class MongoUserService implements UserService {
         this.userModel = mongoose.model<IUser>("users", UserSchema);
     }
 
-    async getUserById(id: string): Promise<IUser> {
-        return await this.userModel.findById(id);
+    public async getUserById(id: string): Promise<ServiceResponse<IUser>> {
+        let user : IUser = null, exception : any = {};
+        try {
+            user = await this.userModel.findById(id);
+        }
+        catch (e) {
+            exception = e;
+        }
+        finally {
+            return {result : user, exception : exception};
+        }
     }
 
-    async getAllUsers(): Promise<IUser[]> {
-        return await this.userModel.find();
+    public async getAllUsers(): Promise<ServiceResponse<IUser[]>> {
+        let users : IUser[] = null, exception : any = {};
+        try {
+            users = await this.userModel.find();
+        }
+        catch (e) {
+            exception = e;
+        }
+        finally {
+            return {result : users, exception : exception};
+        }
     }
 
-    createUser(name: string) : any {
+    public async createUser(name: string) : Promise<ServiceResponse<IUser>> {
+        let user : IUser = new this.userModel(), exception : any = {};
         // Create a collection entry from the model definition
-        var user = new this.userModel;
         user.name = name;
         user.created = new Date();
-
-        // Save this data and return the response
-        return user.save();
+        
+        try {
+            // Save this data
+            user.save();
+        }
+        catch (e) {
+            exception = e;
+            user = null;
+        }
+        finally {
+            // Return the response
+            return {result : user, exception : exception};
+        }
     }
 }

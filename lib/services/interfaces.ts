@@ -1,20 +1,27 @@
 import { IGroup } from "models/groupModel";
+import { IUser } from "models/userModel";
 
 export interface BookService {
   getAllBooks(): any;
 }
+
+export interface ServiceResponse<T> {
+    result : T,
+    exception : any
+}
+
 export interface GroupService {
-    getGroups(): Promise<IGroup[]>;
-    createGroup(group: any): Promise<IGroup>;
-    getGroup(group_id : String) : Promise<IGroup>;
-    leaveGroup(group_id : String, user_id : String) : any;
-    joinGroup(group_id : String, user_id : String) : any;
+    getGroups(): Promise<ServiceResponse<IGroup[]>>;
+    createGroup(group: any): Promise<ServiceResponse<IGroup>>;
+    getGroup(group_id : String) : Promise<ServiceResponse<IGroup>>;
+    leaveGroup(group_id : String, user_id : String) : Promise<ServiceResponse<IGroup>>;
+    joinGroup(group_id : String, user_id : String) : Promise<ServiceResponse<IGroup>>;
 }
 
 export interface UserService {
-    getUserById(id : string) : any
-    getAllUsers()
-    createUser(name: string) : any
+    getUserById(id : string) : Promise<ServiceResponse<IUser>>;
+    getAllUsers() : Promise<ServiceResponse<IUser[]>>;
+    createUser(name: string) : Promise<ServiceResponse<IUser>>;
 }
 
 const TYPES = {
