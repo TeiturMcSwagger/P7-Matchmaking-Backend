@@ -21,7 +21,7 @@ npm run start
 npm run dev
 ```
 
-## Swagger, IoC and Dependency injection
+## Swagger, IoC and Dependency Injection
 The project is using inversify and tsoa as the main tools to simplify the dependency injection and overall abstracts away the nitty gritty details of routing and implementation details of serving requests. 
 
 We use services to increase the testability of our components (think testing one mega class vs. multiple classes with separation of concerns in mind), and to avoid code duplication.
