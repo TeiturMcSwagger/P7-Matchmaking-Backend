@@ -45,6 +45,7 @@ export class UserController extends Controller {
   }
 
   @Post("/create")
+    /* Creates a user based on the body of the request */
   public async createUser(@Body() body: IUser): Promise<void> {
     let username = body.name;
 
