@@ -1,6 +1,6 @@
 import * as mongoose from "mongoose";
 
-import { GroupSchema, IGroup } from "../models/groupModel";
+import { GroupSchema, IMongoGroup, IGroup } from "../models/groupModel";
 import { GroupService } from "./interfaces"
 import { injectable } from "inversify";
 import * as randomstring from "randomstring";
@@ -9,7 +9,7 @@ mongoose.connect(process.env.MONGOURL, { useNewUrlParser: true });
 
 @injectable()
 export class MongoGroupService implements GroupService {
-    private groupsModel : mongoose.Model<IGroup>;
+    private groupsModel : mongoose.Model<IMongoGroup>;
 
     constructor(){
         this.groupsModel = mongoose.model("groups", GroupSchema);
@@ -24,7 +24,7 @@ export class MongoGroupService implements GroupService {
         return this.groupsModel.create(group);
     }
 
-    public async getGroup(group_id : String) : Promise<IGroup> {
+    public async getGroup(group_id : String) : Promise<IMongoGroup> {
         return await this.groupsModel.findById(group_id);
     }
     

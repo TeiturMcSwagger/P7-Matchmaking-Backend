@@ -1,6 +1,6 @@
 import * as mongoose from "mongoose";
 
-import { UserSchema, IUser } from "../models/userModel";
+import { UserSchema, IUser, IMongoUser } from "../models/userModel";
 import { injectable } from "inversify";
 import { UserService } from  "./interfaces";
 
@@ -8,10 +8,10 @@ mongoose.connect(process.env.MONGOURL, { useNewUrlParser: true });
 
 @injectable()
 export class MongoUserService implements UserService {
-    private userModel : mongoose.Model<IUser>;
+    private userModel : mongoose.Model<IMongoUser>;
 
     constructor(){
-        this.userModel = mongoose.model<IUser>("users", UserSchema);
+        this.userModel = mongoose.model<IMongoUser>("users", UserSchema);
     }
 
     async getUserById(id: string): Promise<IUser> {

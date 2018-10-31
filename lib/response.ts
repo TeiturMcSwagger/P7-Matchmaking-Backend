@@ -1,4 +1,11 @@
-export class Response<Tdata> {
+import { IGroup } from "models/groupModel";
+
+export interface IResponse<Tdata> {
+    statuscode : number;
+    error : string;
+    data : Tdata;
+}
+export class Response<Tdata> implements IResponse<Tdata> {
     public statuscode : number;
     public error : string;
     public data : Tdata;
