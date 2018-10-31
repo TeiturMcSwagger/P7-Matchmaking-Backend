@@ -71,13 +71,14 @@ export default class App {
   errorConfigFunc(app: any): void {
     app.use(
       (
-        err: Error,
+        err ,
         request: express.Request,
         response: express.Response,
         next: express.NextFunction
       ) => {
-        logger.info(err.stack);
-        response.status(500).send("Something went wrong");
+        response.status(err.status);
+        response.json(err);
+        logger.info(err);
       }
     );
   }

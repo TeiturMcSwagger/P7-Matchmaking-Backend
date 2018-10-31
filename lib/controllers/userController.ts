@@ -39,27 +39,25 @@ export class UserController extends Controller {
     try {
       result = await this.userService.getUserById(user_id);
     } catch (error) {
-      result = error.message;
+        return error;
     }
     return result;
   }
 
+  @Response("400", "Bad request")
   @Post("/create")
-    /* Creates a user based on the body of the request */
+  /* Creates a user based on the body of the request */
   public async createUser(@Body() body: IUser): Promise<void> {
     let username = body.name;
 
     let result;
     try {
       // This is the created user response
-      result = await this.userService.createUser(username);
+      return await this.userService.createUser(username);
     } catch (error) {
       // This is the error response
-      result = error.message;
+        return error;
     }
 
-    // Send json response
-    return result;
   }
-
 }
