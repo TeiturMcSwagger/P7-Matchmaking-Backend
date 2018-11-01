@@ -6,4 +6,5 @@ import App from "./common/app";
 
 const port = process.env.PORT;
 
-new App().listen(port);
+const server = new App(port);
+server.registerEvents();
