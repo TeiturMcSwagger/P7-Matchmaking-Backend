@@ -12,7 +12,8 @@ export interface GroupService {
 
 export interface UserService {
     getUserById(id : string) : any,
-    createUser(name: string) : any
+    createUser(name: string, discordId : string) : any ,
+    getUsers() : any
 }
 
 export const TYPES = {

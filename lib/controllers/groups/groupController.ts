@@ -12,14 +12,14 @@ import {
 	requestParam
 } from "inversify-express-utils";
 import { injectable, inject } from "inversify";
-import { GroupService, TYPES } from "../../services/interfaces";
+import { GroupService, TYPES, UserService } from "../../services/interfaces";
 import { DiscordController } from "../discordController";
 
 @controller("/groups")
 export class GroupController implements interfaces.Controller {
 	private discordController : DiscordController;
 
-	constructor(@inject(TYPES.GroupService) private groupService: GroupService) {
+	constructor(@inject(TYPES.GroupService) private groupService: GroupService, @inject(TYPES.UserService) private userService: UserService) {
 		this.discordController = new DiscordController();
 	}	
 
@@ -64,10 +64,9 @@ export class GroupController implements interfaces.Controller {
 			// Response is the mongo group.
 			res.json(result);
 		} catch (error) {
+			// Something went wrong, send the errror message!
 			res.json({message: error.message});
 		}
-
-
 	}
 
 	@httpPost("/join")
@@ -79,7 +78,26 @@ export class GroupController implements interfaces.Controller {
 		// Get response from service
 		let result: string;
 		try {
+			// Check if the user is already in the group
+			try{
+				const group = await this.groupService.getGroup(group_id);
+
+				if(group.users.find(user => user===user_id)){
+					throw new Error("user already exists");
+				}
+			}catch(error){
+				throw new Error(error.message);
+			}
+
+			// Join the group in mong
 			result = await this.groupService.joinGroup(group_id, user_id);
+
+			// Get user discord
+			const user = await this.userService.getUserById(user_id);
+
+			// Try: Add the user to the Discord channels
+			await this.discordController.joinGroup(user.discordId, group_id);
+			
 		} catch (error) {
 			result = error.message;
 		}

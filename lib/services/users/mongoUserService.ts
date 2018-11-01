@@ -15,14 +15,19 @@ export class MongoUserService implements UserService {
     }
 
     getUserById(id : string) : any {
-        return this.userModel.find({_id: id});
+        return this.userModel.findOne({_id: id});
     }
 
-    createUser(name: string) : any {
+    getUsers() : any{
+        return this.userModel.find({});
+    }
+
+    createUser(name: string, discordId : string) : any {
         // Create a collection entry from the model definition
         var user = new this.userModel;
         user.name = name;
         user.created = new Date();
+        user.discordId = discordId;
 
         // Save this data and return the response
         return user.save();
