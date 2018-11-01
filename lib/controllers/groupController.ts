@@ -14,8 +14,10 @@ import {
 } from "tsoa";
 import { provideSingleton, inject, provide } from "../common/inversify.config";
 import { GroupService, TYPES, UserService } from "../services/interfaces";
-import { IGroup, IGroupUser } from "models/groupModel";
+import { Group, IGroupUser } from "../models/groupModel";
 import { get } from "https";
+import { promises } from "fs";
+import { twoGroups } from "../interfaces/interfaces"
 
 @Tags("groups")
 @Route("groups")
@@ -29,19 +31,19 @@ export class GroupController extends Controller {
   }
 
   @Get()
-  public async getGroups(): Promise<IGroup[]> {
+  public async getGroups(): Promise<Group[]> {
     return await this.groupService.getGroups();
   }
  //groups/2
   @Get("{group_size}")
-  public async getFittingGroups(group_size : number): Promise<IGroup[]> {
+  public async getFittingGroups(group_size : number): Promise<Group[]> {
     const fittingSize = 5-group_size;
     
     return await this.groupService.getFittingGroups(fittingSize);
   }
 
   @Post()
-  public async createGroup(@Body() body: IGroup) {
+  public async createGroup(@Body() body: Group) {
     try {
       const group = body;
       const result = await this.groupService.createGroup(group);
@@ -101,7 +103,7 @@ export class GroupController extends Controller {
   }
 
   @Get("{group_id}")
-  public async getGroup(group_id: string): Promise<IResponse<IGroup>> {
+  public async getGroup(group_id: string): Promise<IResponse<Group>> {
     var group = await this.groupService.getGroup(group_id);
     var response = new BEResponse(group);
 
@@ -118,7 +120,7 @@ export class GroupController extends Controller {
   public async verifyInvite(
     group_id: string,
     invite_id: string
-  ): Promise<IResponse<IGroup>> {
+  ): Promise<IResponse<Group>> {
     // 1) Check if a group exists with id 'group_id'
     var group = await this.groupService.getGroup(group_id);
     var response = new BEResponse(group);
@@ -149,13 +151,13 @@ export class GroupController extends Controller {
     return response;
   }
 
-  private isMergeCompatible(fromGroup: IGroup, toGroup: IGroup): boolean {
+  private isMergeCompatible(fromGroup: Group, toGroup: Group): boolean {
     
     const newGroupSize = fromGroup.users.length + toGroup.users.length;
-    if(toGroup.maxSize <= newGroupSize){
+    if(toGroup.maxSize >= newGroupSize){
       return false;
     }
-    if (fromGroup.game === toGroup.game) {
+    if (fromGroup.game != toGroup.game) {
       return false;  
     } 
     else {
@@ -164,15 +166,21 @@ export class GroupController extends Controller {
   }
 
   @Post("merge")
-  public async mergeTwoGroups(@Body() body: {from_id: string, to_id: string}){
+  public async mergeTwoGroups(@Body() body: twoGroups):Promise<Group>{
       
     const fromGroup = await this.groupService.getGroup(body.from_id);
     const toGroup = await this.groupService.getGroup(body.to_id);
+    const newGroup = new Group();
     const mergeCompatabilty = this.isMergeCompatible(fromGroup, toGroup);
-    if (mergeCompatabilty === true) {
-      
+    if (mergeCompatabilty) {
+      toGroup.users.push(...fromGroup.users);
+      newGroup.users = toGroup.users;
+      newGroup.game = toGroup.game;
+      newGroup.name = toGroup.name;
+      newGroup.maxSize = toGroup.maxSize;
+      return this.groupService.createGroup(newGroup);
     } else {
-      // make error call
+      return null;
     }
   }
 }

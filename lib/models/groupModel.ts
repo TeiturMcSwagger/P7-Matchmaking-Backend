@@ -31,8 +31,8 @@ export const GroupSchema = new Schema({
 
 
 
-export interface IMongoGroup extends IGroup, mongoose.Document{}
-export interface IGroup {
+export interface IMongoGroup extends Group, mongoose.Document{}
+export class Group {
     name: string;
     game: string;
     maxSize: number;
