@@ -79,25 +79,23 @@ export class GroupController implements interfaces.Controller {
 		let result: string;
 		try {
 			// Check if the user is already in the group
-			try{
-				const group = await this.groupService.getGroup(group_id);
+			const group = await this.groupService.getGroup(group_id);
 
-				if(group.users.find(user => user===user_id)){
-					throw new Error("user already exists");
-				}
-			}catch(error){
-				throw new Error(error.message);
+			if(group.users.find(user => user===user_id)){
+				throw new Error("user already exists");
+			}
+
+			// Get user discord
+			const user = await this.userService.getUserById(user_id);
+			if(!user.discordId){
+				throw new Error("user does not have a Discord Id");
 			}
 
 			// Join the group in mong
 			result = await this.groupService.joinGroup(group_id, user_id);
 
-			// Get user discord
-			const user = await this.userService.getUserById(user_id);
-
-			// Try: Add the user to the Discord channels
+			// Try: Add the user to the Discord channels (This only works if the user is already in the group)
 			await this.discordController.joinGroup(user.discordId, group_id);
-			
 		} catch (error) {
 			result = error.message;
 		}

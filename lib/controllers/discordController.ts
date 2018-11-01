@@ -1,11 +1,13 @@
 import { Client, Guild, Message, GuildMember, Channel, CategoryChannel, TextChannel, VoiceChannel, Role, RoleData } from "discord.js";
 import { text } from "body-parser";
+import { injectable, inject } from "inversify";
+import { TYPES, UserService, GroupService } from "../services/interfaces";
 
 export class DiscordController {
     private client: Client;
     private guild: Guild;
 
-    constructor() {
+    constructor(@inject(TYPES.UserService) private userService : UserService, @inject(TYPES.GroupService) private groupService : GroupService) {
         this.client = new Client();
 
         this.initMessageEvents();
@@ -15,8 +17,39 @@ export class DiscordController {
         this.client.login(process.env.DISCORDTOKEN);
 
         this.client.on("message", (message: Message) => {
-            console.log(message.member.user.username);
-            console.log(message.author.discriminator);
+            // Handle messages, posted to any Discord channel (We can add filters and text commands here)
+        });
+
+        this.client.on("guildMemberAdd", async (member) => {
+            // When a new user joins the Discord server
+            const username = member.user.username;
+            const discriminator = member.user.discriminator;
+            const discordId = username + "#" + discriminator;
+
+            // Check whether the user should be added to something or not
+            try{
+                // Check if there is a user with this id
+                console.log(this.userService);
+                const user = await this.userService.getUserByDiscordId(discordId);
+                console.log(user);
+
+                if(!user){
+                    throw new Error("User does not exist, please create a user");
+                }
+
+                // Check if there is a group with this user groupId
+                const groups = await this.groupService.getGroups();
+                const userGroup = groups.find((group) => group.users.find((user) => user.discordId === discordId));
+
+                if(!userGroup){
+                    throw new Error("You are not in a group, please join one");
+                }
+
+                await this.joinGroup(discordId, userGroup._id);
+            }catch(error){
+                member.sendMessage("Hello! \nPlease join a group on the matchmaking platform, in order to join a channel! \nThank you /xoxo");
+                console.log("Catch: " + error.message);
+            }
         });
     }
 
@@ -37,21 +70,21 @@ export class DiscordController {
         return guild;
     }
 
-    public async joinGroup(discordId: string, groupId: string): Promise<GuildMember> {
+    public async joinGroup(discordId: string, groupId: string): Promise<Object> {
         /*  Settings:
             console.log(message.member.user.username);
             console.log(message.author.discriminator);
         */
         const guild: Guild = await this.initBot(process.env.DISCORDTOKEN);
 
-        const profile : string[] = discordId.split("#");
-        const username : string = profile[0];
-        const discriminator : string = profile[1];
-
         let member : GuildMember;
         try {
             // Try and find the user as a member in Discord
             try{
+                const profile : string[] = discordId.split("#");
+                const username : string = profile[0];
+                const discriminator : string = profile[1];
+
                 member = await guild.members.find((member) => username === member.user.username && discriminator === member.user.discriminator);   
             }catch(error){
                 throw new Error("Member does not exist");
@@ -66,10 +99,10 @@ export class DiscordController {
                 throw new Error(error.message);
             }
         } catch (error) {
-            throw new Error("JoinGroupError: " + error.message);
+            return {"message": error.message}
         }
 
-        return member;
+        return {"message": "discord user joined group"};
     }
 
     // Register new group role and channel

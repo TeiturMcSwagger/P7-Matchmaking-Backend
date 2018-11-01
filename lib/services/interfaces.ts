@@ -11,6 +11,7 @@ export interface GroupService {
 }
 
 export interface UserService {
+    getUserByDiscordId(discord_id : string) : any,
     getUserById(id : string) : any,
     createUser(name: string, discordId : string) : any ,
     getUsers() : any

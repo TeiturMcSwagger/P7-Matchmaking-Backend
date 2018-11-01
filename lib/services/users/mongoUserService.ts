@@ -14,6 +14,10 @@ export class MongoUserService implements UserService {
         this.userModel = mongoose.model("users", UserSchema);
     }
 
+    getUserByDiscordId(discord_id : string) : any{
+        return this.userModel.findOne({discordId: discord_id});
+    }
+
     getUserById(id : string) : any {
         return this.userModel.findOne({_id: id});
     }
