@@ -21,14 +21,14 @@ npm run start
 npm run dev
 ```
 
-## Swagger, IoC and Dependency injection
+## Swagger, IoC and Dependency Injection
 The project is using inversify and tsoa as the main tools to simplify the dependency injection and overall abstracts away the nitty gritty details of routing and implementation details of serving requests. 
 
 We use services to increase the testability of our components (think testing one mega class vs. multiple classes with separation of concerns in mind), and to avoid code duplication.
 
 The fundamental thing behind the approach is decorators:
 
-Decorators are simple annotations attached to components (classes/functions). If we consider asp.net core controllers are required to be called SomethingController, in order for their Inversion of Control (IoC) to correctly serve requests. Express and newer frameworks tend to not offer this directly, and require a setup like express: app.use(route, requestHandler). 
+Decorators are simple annotations attached to components (classes/functions). If we consider asp.net core controllers are required to be called SomethingController, in order for their Inversion of Control (IoC) to correctly serve requests. Express and newer frameworks tend to not offer this directly, and require a setup like (express): app.use(route, requestHandler). 
 
 Instead we are decorating our requesthandlers (methods in our controllers) with their routes, and the framework will then generate the express code.
 ```
