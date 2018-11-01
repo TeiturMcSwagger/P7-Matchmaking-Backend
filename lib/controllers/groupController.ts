@@ -15,6 +15,7 @@ import {
 import { provideSingleton, inject, provide } from "../common/inversify.config";
 import { GroupService, TYPES, UserService } from "../services/interfaces";
 import { IGroup, IGroupUser } from "models/groupModel";
+import { get } from "https";
 
 @Tags("groups")
 @Route("groups")
@@ -30,6 +31,13 @@ export class GroupController extends Controller {
   @Get()
   public async getGroups(): Promise<IGroup[]> {
     return await this.groupService.getGroups();
+  }
+ //groups/2
+  @Get("{group_size}")
+  public async getFittingGroups(group_size : number): Promise<IGroup[]> {
+    const fittingSize = 5-group_size;
+    
+    return await this.groupService.getFittingGroups(fittingSize);
   }
 
   @Post()
@@ -139,5 +147,32 @@ export class GroupController extends Controller {
     // The "join group" controller will handle checks such as is the group full / does the user meet the requirements
     // TODO: Handle in frontend
     return response;
+  }
+
+  private isMergeCompatible(fromGroup: IGroup, toGroup: IGroup): boolean {
+    
+    const newGroupSize = fromGroup.users.length + toGroup.users.length;
+    if(toGroup.maxSize <= newGroupSize){
+      return false;
+    }
+    if (fromGroup.game === toGroup.game) {
+      return false;  
+    } 
+    else {
+      return true;
+    }
+  }
+
+  @Post("merge")
+  public async mergeTwoGroups(@Body() body: {from_id: string, to_id: string}){
+      
+    const fromGroup = await this.groupService.getGroup(body.from_id);
+    const toGroup = await this.groupService.getGroup(body.to_id);
+    const mergeCompatabilty = this.isMergeCompatible(fromGroup, toGroup);
+    if (mergeCompatabilty === true) {
+      
+    } else {
+      // make error call
+    }
   }
 }

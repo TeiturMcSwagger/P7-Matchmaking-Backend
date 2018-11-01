@@ -5,8 +5,10 @@ export interface BookService {
 }
 export interface GroupService {
     getGroups(): Promise<IGroup[]>;
+    getFittingGroups(size: number) : Promise<IGroup[]>;
     createGroup(group: any): Promise<IGroup>;
     getGroup(group_id : String) : Promise<IGroup>;
+
     leaveGroup(group_id : String, user_id : String) : any;
     joinGroup(group_id : String, user_id : String) : any;
 }
