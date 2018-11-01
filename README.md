@@ -47,3 +47,13 @@ In order to register a new controller you should export it through /lib/controll
     - Every controller should be imported once in /lib/common/app.ts.
 
 USE TYPES it makes the code more readable + it comes with nice benefit of actually generating better swagger docs. 
+
+## Errors as responses
+Most of the potential errors which might occur are handled automatically. If an error is not caught by the checks, throw an error instead:
+
+```
+throw new ApiException({statusCode: 404,
+        name: ...,
+        message: ...,
+        fields: ...})
+```
