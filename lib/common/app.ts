@@ -1,6 +1,8 @@
 // lib/app.ts
 import * as express from "express";
 import * as os from "os";
+import { ApiError } from "../controllers/ErrorHandler";
+import { ValidateError } from "tsoa";
 import logger from "./logger";
 import * as morgan from "morgan";
 import { Application } from "express";
@@ -76,8 +78,19 @@ export default class App {
         response: express.Response,
         next: express.NextFunction
       ) => {
-        logger.info(err.stack);
-        response.status(500).send("Something went wrong");
+        logger.info(request);
+        const error = new ApiError({
+          statusCode:
+            err instanceof ApiError ? (err as ApiError).statusCode : 400,
+          name: err.name,
+          message: err.message,
+          fields:
+            err instanceof ValidateError
+              ? (err as ValidateError).fields
+              : { stack: { message: err.stack } }
+        });
+        logger.info(error);
+        response.send(error);
       }
     );
   }
