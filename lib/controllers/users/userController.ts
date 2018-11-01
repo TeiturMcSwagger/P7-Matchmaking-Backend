@@ -11,18 +11,16 @@ import {
   response,
   requestParam
 } from "inversify-express-utils";
-import { injectable, inject } from "inversify";
-import { GroupService, TYPES, UserService } from "../../services/interfaces";
+import { inject } from "inversify";
+import { TYPES, UserService } from "../../services/interfaces";
 
 @controller("/users")
 export class UserController implements interfaces.Controller {
 
     constructor(@inject(TYPES.UserService) private userService: UserService) {}
 
-
     @httpGet("/")
     public async getUserById(req: Request, res: Response) : Promise<void>{
-
         let user_id : string = req.body.user_id;
 
         let result : string;

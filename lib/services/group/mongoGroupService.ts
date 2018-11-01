@@ -19,6 +19,10 @@ export class MongoGroupService implements GroupService {
         return this.groupsModel.find();
     }
 
+    public updateGroupDiscordChannels(channels : string[], groupId : string){
+        return this.groupsModel.findOneAndUpdate({_id: groupId}, {$push: {discordChannels: channels}}, {new: true});
+    }
+
     public createGroup(group): Promise<any> {
         group.invite_id = randomstring.generate();
         return this.groupsModel.create(group);
@@ -29,13 +33,13 @@ export class MongoGroupService implements GroupService {
     }
     
     public joinGroup(group_id: string, user_id: string) : any {
-        return this.groupsModel.updateOne({_id: group_id}, {$push: {users: user_id}});       
+        return this.groupsModel.findOneAndUpdate({_id: group_id}, {$push: {users: user_id}});       
     }
 
     // leaveGroup(group_id) | Checks whether the group id exist in the database
     // Out: A message, containing either a success- or reject message
     public leaveGroup(group_id: string, user_id: string) : any {
         // This finds the group, where both the group_id and user_id matches, and $pulls out the entry from the users array. 
-        return this.groupsModel.updateOne({_id: group_id}, {$pull: {users: {$in: [user_id]}}});       
+        return this.groupsModel.findOneAndUpdate({_id: group_id}, {$pull: {users: {$in: [user_id]}}});       
     }
 }

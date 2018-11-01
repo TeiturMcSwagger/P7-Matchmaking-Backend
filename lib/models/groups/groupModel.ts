@@ -27,4 +27,8 @@ export const GroupSchema = new Schema({
         type: [String], 
         default: []
     },
+    discordChannels: {
+        type: [String],
+        default: []
+    }
 });

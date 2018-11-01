@@ -1,9 +1,8 @@
 import * as mongoose from "mongoose";
 
 import { UserSchema } from "../../models/users/userModel";
-import { GroupService, UserService } from "../interfaces"
+import { UserService } from "../interfaces"
 import { injectable } from "inversify";
-import * as randomstring from "randomstring";
 
 mongoose.connect(process.env.MONGOURL, { useNewUrlParser: true });
 

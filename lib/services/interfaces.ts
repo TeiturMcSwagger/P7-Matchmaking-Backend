@@ -4,6 +4,7 @@ export interface BookService {
 export interface GroupService {
     getGroups(): any;
     createGroup(group: any): Promise<any>;
+    updateGroupDiscordChannels(channels : string[], groupId : string);
     getGroup(group_id : String) : any;
     leaveGroup(group_id : String, user_id : String) : any;
     joinGroup(group_id : String, user_id : String) : any;
@@ -14,10 +15,8 @@ export interface UserService {
     createUser(name: string) : any
 }
 
-const TYPES = {
+export const TYPES = {
     BookService: Symbol.for("BookService"),
     GroupService: Symbol.for("GroupService"),
-    UserService: Symbol.for("UserService")
+    UserService: Symbol.for("UserService"),
 };
-
-export { TYPES };
