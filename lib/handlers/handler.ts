@@ -1,6 +1,7 @@
 import * as io from 'socket.io';
 import { TYPES, IIOService, GroupService } from '../services/interfaces';
 import { inject, lazyInject } from '../common/inversify.config';
+import logger from '../common/logger';
 
 export default class Handler{
     // @lazyInject(TYPES.IIOService) 

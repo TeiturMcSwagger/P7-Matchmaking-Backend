@@ -15,13 +15,20 @@ export default function(io : IO.Server){
     const groupsHandler = new GroupsHandler(io);
     let groupEventHandler = new EventHandleMap();
     groupEventHandler.eventHandleMapping = {
-        // 'getGroups' : null,
-        // 'getGroup' : null,
+        'getGroups' : groupsHandler.getGroups,
+        'getGroup' : groupsHandler.getGroup,
+        'createGroup' : groupsHandler.createGroup,
+        'joinGroup' : groupsHandler.joinGroup,
+        'leaveGroup' : groupsHandler.leaveGroup,
+        'verifyInvite' : groupsHandler.verifyInvite,
+
+        
         'subscribeToTimer' : groupsHandler.subscribeToTimer,
         'incTimer' : groupsHandler.incTimer
     }
     io.of('/groups').on('connection', (socket : IO.Socket) => {
         logger.debug('User connected to the "groups" namespace!');
+        // logger.error('Length: ' + Object.keys(io.sockets.sockets).length);
         registerHandlers(io, socket, groupEventHandler);
     });
 }

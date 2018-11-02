@@ -40,6 +40,12 @@ export default class GroupsHandler extends Handler {
         //  To room with group_id
     }
 
+    public getGroup = (socket : IO.Socket, args : any) : void => {}
+
+    public getGroups = (socket : IO.Socket, args : any) : void => {}
+
+    public verifyInvite = (socket : IO.Socket, args : any) : void => {}
+
     public incTimer = async (socket : IO.Socket, args : any) : Promise<void> => {
         // let interval = args as number;
         logger.debug(socket.id + ' incremented from ' + this.count);
