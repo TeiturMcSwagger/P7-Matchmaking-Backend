@@ -19,6 +19,7 @@ import { get } from "https";
 import { promises } from "fs";
 import { twoGroups } from "../interfaces/interfaces";
 import { ApiError } from "./ErrorHandler";
+import { response } from "inversify-express-utils";
 
 @Tags("groups")
 @Route("groups")
@@ -48,6 +49,7 @@ export class GroupController extends Controller {
     return await this.groupService.createGroup(body);
   }
 
+  @Response<ApiError>(404,"Not valid state (user already in group/user not found)")
   @Post("/join")
   public async joinGroup(@Body() body: IGroupUser): Promise<any> {
     // Post request group id and username attributes is stored..
@@ -84,9 +86,16 @@ export class GroupController extends Controller {
     return await this.groupService.leaveGroup(group_id, user_id);
   }
 
+  @Response<ApiError>(404,"Group not found")
   @Get("{group_id}")
   public async getGroup(group_id: string): Promise<Group> {
-    return await this.groupService.getGroup(group_id);
+    const res = await this.groupService.getGroup(group_id);
+    if (res == null){
+      throw new ApiError({ 
+        message : `The grou with the groupID: ${group_id} was not found.`, statusCode : 404, name: "Not found"}
+      );
+    }  
+    return res;
   }
   @Get("{group_id}/{invite_id}")
   public async verifyInvite(
