@@ -29,7 +29,6 @@ export class UserController extends Controller {
   @Get("/")
   public async getAllUsers(): Promise<IUser[]> {
     const users = await this.userService.getAllUsers();
-    console.log("USERSSS", users);
     return users;
   }
 
@@ -47,9 +46,14 @@ export class UserController extends Controller {
     return result;
   }
 
-  @Post("/create")
   /* Creates a user based on the body of the request */
-  public async createUser(@Body() body: IUser): Promise<IUser> {
+  // Don't use IUser in body since it will throw a validation error saying created is required
+  @Post("/create")
+  public async createUser(@Body()
+  body: {
+    name: string;
+    discordId: string;
+  }): Promise<IUser> {
     return this.userService.createUser(body.name, body.discordId);
   }
 }

@@ -15,6 +15,6 @@ export const UserSchema : mongoose.Schema = new Schema({
 export interface IMongoUser extends IUser, mongoose.Document{}
 export interface IUser {
     name: string,
-    created: Date,
     discordId: string,
+    created: Date,
 }
