@@ -27,13 +27,13 @@ export class GroupController extends Controller {
     super();
   }
 
-  @Get()
+  @Get("/")
   public async getGroups(): Promise<IGroup[]> {
     return await this.groupService.getGroups();
   }
 
-  @Post()
-  public async createGroup(@Body() body: IGroup) {
+  @Post("/create")
+  public async createGroup(@Body() body: any) {
     try {
       const group = body;
       const result = await this.groupService.createGroup(group);
@@ -43,7 +43,7 @@ export class GroupController extends Controller {
     }
   }
 
-  @Post("join")
+  @Post("/join")
   public async joinGroup(@Body() body: IGroupUser): Promise<any> {
     // Post request group id and username attributes is stored..
     const group_id: string = body.group_id;

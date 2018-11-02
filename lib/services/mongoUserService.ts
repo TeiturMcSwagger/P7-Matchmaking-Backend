@@ -22,12 +22,12 @@ export class MongoUserService implements UserService {
         return await this.userModel.find();
     }
 
-    createUser(name: string) : any {
+    createUser(name: string, discordId: string) : Promise<IUser> {
         // Create a collection entry from the model definition
         var user = new this.userModel;
         user.name = name;
+        user.discordId = discordId;
         user.created = new Date();
-
         // Save this data and return the response
         return user.save();
     }
