@@ -1,12 +1,14 @@
-import { IGroup } from "models/groupModel";
+import { Group } from "models/groupModel";
 
 export interface BookService {
   getAllBooks(): any;
 }
 export interface GroupService {
-    getGroups(): Promise<IGroup[]>;
-    createGroup(group: any): Promise<IGroup>;
-    getGroup(group_id : String) : Promise<IGroup>;
+    getGroups(): Promise<Group[]>;
+    getFittingGroups(size: number) : Promise<Group[]>;
+    createGroup(group: any): Promise<Group>;
+    getGroup(group_id : String) : Promise<Group>;
+
     leaveGroup(group_id : String, user_id : String) : any;
     joinGroup(group_id : String, user_id : String) : any;
 }

@@ -1,4 +1,4 @@
-import { IGroup } from "models/groupModel";
+import { Group } from "models/groupModel";
 
 export interface IResponse<Tdata> {
     statuscode : number;
