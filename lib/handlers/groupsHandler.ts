@@ -5,16 +5,13 @@ import { GroupService, TYPES, UserService } from "../services/interfaces";
 import { IGroup, IGroupUser } from "../models/groupModel";
 import { inject, lazyInject } from '../common/inversify.config';
 import { ADDRGETNETWORKPARAMS } from 'dns';
+import { UV_UDP_REUSEADDR } from 'constants';
 
 export default class GroupsHandler extends Handler {
     @lazyInject(TYPES.GroupService)
     private groupService : GroupService;
 
     private count : number = 22;    
-
-    // public getGroups(socket : IO.Socket, args : any) : any {
-
-    // }
 
     public createGroup = (socket : IO.Socket, args : any) : void => {
         // Invoke mongoGroupsService createGroup
@@ -25,6 +22,7 @@ export default class GroupsHandler extends Handler {
     }
 
     public joinGroup = (socket : IO.Socket, args : any) : void => {
+        logger.info("Join group invoked");
         // Invoke mongoGroupsService joinGroup
         // Add socket to room with group_id
         // emit that a group has changed
@@ -32,7 +30,7 @@ export default class GroupsHandler extends Handler {
         //  To room with group_id
     }
 
-    public leaveGroup = (socket : IO.Socket, args : any) : void => {
+    public leaveGroup(socket : IO.Socket, args : any) : void {
         // Invoke mongoGroupsService leaveGroup
         // Disconnect/remove socket from room with group_id
         // emit that a group has changed
@@ -53,9 +51,10 @@ export default class GroupsHandler extends Handler {
         this.IO.of('/groups').emit('timer', this.count);
     }
 
-    public subscribeToTimer = (socket : IO.Socket, args : any) : void => {
+    public subscribeToTimer(socket : IO.Socket, args : any) : void {
         // let interval = args as number;
         logger.debug('client is subscribing to timer at count ', this.count);
+        this.IO.of('/groups').emit('timer', this.count);
     }
 
 
