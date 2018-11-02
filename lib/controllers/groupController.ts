@@ -10,14 +10,14 @@ import {
   Query,
   Body,
   Response,
-  Tags
+  Tags,
 } from "tsoa";
 import { provideSingleton, inject, provide } from "../common/inversify.config";
 import { GroupService, TYPES, UserService } from "../services/interfaces";
 import { Group, IGroupUser } from "../models/groupModel";
 import { get } from "https";
 import { promises } from "fs";
-import { twoGroups } from "../interfaces/interfaces"
+import { twoGroups } from "../interfaces/interfaces";
 
 @Tags("groups")
 @Route("groups")
@@ -34,15 +34,15 @@ export class GroupController extends Controller {
   public async getGroups(): Promise<Group[]> {
     return await this.groupService.getGroups();
   }
- //groups/2
+  //groups/2
   @Get("{group_size}")
-  public async getFittingGroups(group_size : number): Promise<Group[]> {
-    const fittingSize = 5-group_size;
-    
+  public async getFittingGroups(group_size: number): Promise<Group[]> {
+    const fittingSize = 5 - group_size;
+
     return await this.groupService.getFittingGroups(fittingSize);
   }
 
-  @Post()
+  @Post("/create")
   public async createGroup(@Body() body: Group) {
     try {
       const group = body;
@@ -152,22 +152,19 @@ export class GroupController extends Controller {
   }
 
   private isMergeCompatible(fromGroup: Group, toGroup: Group): boolean {
-    
     const newGroupSize = fromGroup.users.length + toGroup.users.length;
-    if(toGroup.maxSize >= newGroupSize){
+    if (toGroup.maxSize >= newGroupSize) {
       return false;
     }
     if (fromGroup.game != toGroup.game) {
-      return false;  
-    } 
-    else {
+      return false;
+    } else {
       return true;
     }
   }
 
   @Post("merge")
-  public async mergeTwoGroups(@Body() body: twoGroups):Promise<Group>{
-      
+  public async mergeTwoGroups(@Body() body: twoGroups): Promise<Group> {
     const fromGroup = await this.groupService.getGroup(body.from_id);
     const toGroup = await this.groupService.getGroup(body.to_id);
     const newGroup = new Group();
