@@ -9,7 +9,7 @@ import {
   Query,
   Body,
   Response,
-  Tags
+  Tags,
 } from "tsoa";
 import { ApiError } from "./ErrorHandler";
 import { provideSingleton, inject, provide } from "../common/inversify.config";
@@ -42,24 +42,14 @@ export class UserController extends Controller {
         statusCode: 404,
         name: "Find user Error",
         message: "User not found",
-        fields: null
+        fields: null,
       });
     return result;
   }
 
   @Post("/create")
-    /* Creates a user based on the body of the request */
-  public async createUser(@Body() body: IUser): Promise<void> {
-    let result;
-    try {
-      // This is the created user response
-      result = await this.userService.createUser(body.name, body.discordId);
-    } catch (error) {
-      // This is the error response
-      result = error.message;
-    }
-
-    // Send json response
-    return result;
+  /* Creates a user based on the body of the request */
+  public async createUser(@Body() body: IUser): Promise<IUser> {
+    return this.userService.createUser(body.name, body.discordId);
   }
 }
