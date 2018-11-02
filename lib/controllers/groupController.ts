@@ -36,7 +36,7 @@ export class GroupController extends Controller {
     return await this.groupService.getGroups();
   }
   //groups/2
-  @Get("{group_size}")
+  @Get("fitting/{group_size}")
   public async getFittingGroups(group_size: number): Promise<Group[]> {
     const fittingSize = 5 - group_size;
 
