@@ -35,13 +35,20 @@ export class DiscordController {
     private initMessageEvents() {
         this.client.on("message", (message: Message) => {
             // Handle messages, posted to any Discord channel (We can add filters and text commands here)
-            if(message.content === "!rolecheck") {
-                let role : Role = message.guild.roles.find((role : Role) => role.name === "5be2a19c051a4d42f4eb3dc0");
-                message.channel.send("Role: " + role.name);
-                
-            }
+            // if(message.content === "!rolecheck") {
+            //     let role : Role = message.guild.roles.find((role : Role) => role.name === "5be2a19c051a4d42f4eb3dc0");
+            //     message.channel.send("Role: " + role.name);            
+            // }
         });
 
+
+        this.client.on("guildMemberRemove", async (member : GuildMember) => {
+            // When a member leaves the server, reset his roles
+            try{
+                await member.setRoles([]);
+            }catch(error){
+            }
+        });
 
         this.client.on("guildMemberAdd", async (member : GuildMember) => {
             // When a new user joins the Discord server
@@ -71,14 +78,12 @@ export class DiscordController {
                 await userGroups.forEach((group : IGroup) => {
                     // If the group has discord channels
                     if(group.discordChannels.length > 0){
-                        console.log("Found discord group!");
                         this.joinGroup(discordId, group._id);
                     }
                 });
             }catch(error){
                 // If something went wrong, say to the member, that they must join a group on the platform.
                 member.send("Hello! \nPlease join a group on the matchmaking platform, in order to join a channel! \nThank you \n/xoxo");
-                console.log(error.message);
             }
         });
     }
