@@ -16,6 +16,7 @@ import { provideSingleton, inject, provide } from "../common/inversify.config";
 import { GroupService, TYPES, UserService } from "../services/interfaces";
 import { IGroup, IGroupUser, IGroupCreateBody } from "models/groupModel";
 import { DiscordController } from "./discordController";
+import { IUser } from "models/userModel";
 
 @Tags("groups")
 @Route("groups")
@@ -117,6 +118,14 @@ export class GroupController extends Controller {
     let group_id: string = body.group_id;
     let user_id: string = body.user_id;
 
+    // Get user discord
+    let user : IUser;
+    try{
+      user = await this.userService.getUserById(user_id);
+    }catch(error){
+      throw new Error("user does not have a Discord Id");
+    }
+
     // Get response from service
     let result;
     try {
@@ -124,6 +133,15 @@ export class GroupController extends Controller {
     } catch (error) {
       result = error.message;
     }
+
+    // Remove user from the Discord channels
+    try {
+      await this.discordController.leaveGroup(user.discordId, group_id);
+    }catch(error){
+      // Do nothing -- This error is not critical
+    }
+    
+
     // Return result
     return result;
   }

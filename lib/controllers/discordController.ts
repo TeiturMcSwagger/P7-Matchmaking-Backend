@@ -1,10 +1,9 @@
-import { Client, Guild, Message, GuildMember, Channel, CategoryChannel, TextChannel, VoiceChannel, Role } from "discord.js";
-import { injectable, inject } from "inversify";
+import { Client, Guild, Message, GuildMember, CategoryChannel, TextChannel, VoiceChannel, Role } from "discord.js";
+import { inject } from "inversify";
 import { TYPES, UserService, GroupService } from "../services/interfaces";
 import { provideSingleton } from "../common/inversify.config";
 import { IGroup } from "models/groupModel";
 import { IUser } from "models/userModel";
-import { isRegExp } from "util";
 
 @provideSingleton(DiscordController)
 export class DiscordController {
@@ -83,14 +82,37 @@ export class DiscordController {
         });
     }
 
-    public async joinGroup(discordId: string, groupId: string): Promise<Object> {
-        console.log("Trying to join!");
-        /*  Settings:
-            console.log(message.member.user.username);
-            console.log(message.author.discriminator);
-        */
-        const guild: Guild = this.guild;
+    public async leaveGroup(discordId: string, groupId: string): Promise<Object> {
+        try{
+            // Find the member on the server
+            const profile : string[] = discordId.split("#");
+            const username : string = profile[0];
+            const discriminator : string = profile[1];
 
+            // Check if the user on the server
+            const member = await this.guild.members.find((member : GuildMember) => username === member.user.username && discriminator === member.user.discriminator);   
+            
+            // Check if member exist
+            if(member === undefined || member === null){
+                throw new Error("Discord user not found: " + discordId);
+            }
+
+            // Find the role for removal
+            const role : Role = await this.guild.roles.find((role : Role) => role.name === groupId.toString());
+            
+            if(role === undefined || role === null){
+                throw new Error("Role not found");
+            }
+
+            member.removeRole(role);
+        }catch(error){
+            console.log(error.message);
+            return {"message": error.message};
+        }
+        return {"message": "Member was kicked"};
+    }
+
+    public async joinGroup(discordId: string, groupId: string): Promise<Object> {
         let member : GuildMember;
         // Try and find the user as a member in Discord
         try{
@@ -98,27 +120,23 @@ export class DiscordController {
             const username : string = profile[0];
             const discriminator : string = profile[1];
 
-            member = await guild.members.find((member : GuildMember) => username === member.user.username && discriminator === member.user.discriminator);   
+            // Check if the user on the server
+            member = await this.guild.members.find((member : GuildMember) => username === member.user.username && discriminator === member.user.discriminator);   
             
+            // Check if member exist
             if(member === undefined){
                 throw new Error("Discord user not found");
             }
 
             // Try and add the user to the role
-            console.log("GroupId: " + groupId);
-            const role : Role = await guild.roles.find((role : Role) => role.name === groupId.toString());
+            const role : Role = await this.guild.roles.find((role : Role) => role.name === groupId.toString());
 
             if(role === undefined){
                 throw new Error("Role could not be found! (Does the group exist?)");
             }
-            console.log("Role: " + role);
 
-
+            // Finally add the role to the member.
             await member.addRole(role); 
-            console.log("Straight after!");
-       
-
-        console.log("Should be done!");
     } catch (error) {
         console.log(error.message);
         return {"message": error.message}
@@ -129,12 +147,10 @@ export class DiscordController {
 
     // Register new group role and channel
     public async handleNewGroupRequest(groupId: string, gameTitle: string): Promise<string[]> {
-        const guild: Guild = this.guild;
-
         // Create a role
         let role: Role;
         try {
-            role = await this.createRole(groupId, guild);
+            role = await this.createRole(groupId, this.guild);
         } catch (error) {
             throw new Error("CreateRoleError: " + error.message);
         }
@@ -142,7 +158,7 @@ export class DiscordController {
         // Create both a voice and a text channel for this group
         let channelIds: string[];
         try {
-            channelIds = await this.createGroupChannels(gameTitle, role, guild);
+            channelIds = await this.createGroupChannels(gameTitle, role, this.guild);
         } catch (error) {
             throw new Error("DiscordChannelCreationError: " + error.message);
         }
