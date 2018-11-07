@@ -9,7 +9,7 @@ import {
 } from "tsoa";
 import { provideSingleton, inject, provide } from "../common/inversify.config";
 import { GroupService, TYPES, UserService } from "../services/interfaces";
-import { IGroup, IGroupUser, IGroupCreateBody } from "../models/groupModel";
+import { IGroup, IGroupUser, IGroupCreateBody, IGame } from "../models/groupModel";
 import { get } from "https";
 import { promises } from "fs";
 import { twoGroups } from "../interfaces/interfaces";
@@ -18,6 +18,9 @@ import { response } from "inversify-express-utils";
 import { MessageEmbed } from "discord.js";
 import { DiscordController } from "./discordController";
 import { IUser } from "models/userModel";
+
+const gameData = require("../gamelist.json");
+
 
 @Tags("groups")
 @Route("groups")
@@ -42,6 +45,10 @@ export class GroupController extends Controller {
     return await this.groupService.getFittingGroups(fittingSize);
   }
 
+  @Get("game")
+  public async getGameList() : Promise<IGame[]>{
+    return await gameData;
+  }
 
   @Post()
   public async createGroup(@Body() body: IGroupCreateBody) {
