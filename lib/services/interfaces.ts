@@ -1,4 +1,5 @@
 import { Group } from "models/groupModel";
+import { IUser } from "models/userModel";
 
 export interface BookService {
   getAllBooks(): any;
@@ -16,7 +17,7 @@ export interface GroupService {
 export interface UserService {
     getUserById(id : string) : any
     getAllUsers()
-    createUser(name: string) : any
+    createUser(name: string, discordId: string) : Promise<IUser>
 }
 
 const TYPES = {
