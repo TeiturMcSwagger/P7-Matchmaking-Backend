@@ -15,3 +15,11 @@ export const UserSchema : mongoose.Schema = new Schema({
     },
     created: String
 });
+
+export interface IMongoUser extends IUser, mongoose.Document{_id: string}
+export interface IUser {
+    _id: string,
+    name: string,
+    created: Date,
+    discordId: string
+}

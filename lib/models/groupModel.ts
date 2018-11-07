@@ -32,3 +32,27 @@ export const GroupSchema = new Schema({
         default: []
     }
 });
+
+
+
+export interface IMongoGroup extends IGroup, mongoose.Document{_id: string}
+export interface IGroup {
+    _id: string;
+    discordChannels: string[];
+    name: string;
+    game: string;
+    maxSize: number;
+    users: string[];
+    invite_id: string;
+}
+
+export interface IGroupCreateBody {
+    name: string,
+    game: string,
+    maxSize: number
+}
+
+export interface IGroupUser {
+    user_id: string;
+    group_id: string;
+}

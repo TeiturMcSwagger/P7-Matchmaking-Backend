@@ -1,7 +1,7 @@
 import * as mongoose from "mongoose";
 
-import { GroupSchema } from "../../models/groups/groupModel";
-import { GroupService } from "../interfaces"
+import { GroupSchema, IMongoGroup, IGroup } from "../models/groupModel";
+import { GroupService } from "./interfaces"
 import { injectable } from "inversify";
 import * as randomstring from "randomstring";
 
@@ -9,14 +9,14 @@ mongoose.connect(process.env.MONGOURL, { useNewUrlParser: true });
 
 @injectable()
 export class MongoGroupService implements GroupService {
-    private groupsModel : mongoose.Model<any>;
+    private groupsModel : mongoose.Model<IMongoGroup>;
 
     constructor(){
         this.groupsModel = mongoose.model("groups", GroupSchema);
     }
 
-    public getGroups() {
-        return this.groupsModel.find();
+    public async getGroups(): Promise<IGroup[]> {
+        return await this.groupsModel.find();
     }
 
     public updateGroupDiscordChannels(channels : string[], groupId : string){
@@ -28,8 +28,12 @@ export class MongoGroupService implements GroupService {
         return this.groupsModel.create(group);
     }
 
-    public getGroup(group_id : String) : any {
-        return this.groupsModel.findById(group_id);
+    public async getGroup(group_id : String) : Promise<IMongoGroup> {
+        return await this.groupsModel.findById(group_id);
+    }
+
+    public async getGroupsByUserId(user_id : string) : Promise<IGroup[]> {
+        return await this.groupsModel.find({"users": {$in: [user_id]}});
     }
     
     public joinGroup(group_id: string, user_id: string) : any {

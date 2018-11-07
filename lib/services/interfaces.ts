@@ -1,24 +1,28 @@
+import { IGroup } from "models/groupModel";
+import { IUser } from "models/userModel";
+
 export interface BookService {
   getAllBooks(): any;
 }
 export interface GroupService {
-    getGroups(): any;
-    createGroup(group: any): Promise<any>;
     updateGroupDiscordChannels(channels : string[], groupId : string);
-    getGroup(group_id : String) : any;
+    getGroups(): Promise<IGroup[]>;
+    createGroup(group: any): Promise<IGroup>;
+    getGroup(group_id : String) : Promise<IGroup>;
+    getGroupsByUserId(user_id : String) : Promise<IGroup[]>;
     leaveGroup(group_id : String, user_id : String) : any;
     joinGroup(group_id : String, user_id : String) : any;
 }
 
 export interface UserService {
-    getUserByDiscordId(discord_id : string) : any,
-    getUserById(id : string) : any,
+    getUserById(id : string) : Promise<IUser>
+    getAllUsers() : Promise<IUser[]>,
     createUser(name: string, discordId : string) : any ,
-    getUsers() : any
+    getUserByDiscordId(discord_id : string) : any
 }
 
 export const TYPES = {
     BookService: Symbol.for("BookService"),
-    GroupService: Symbol.for("GroupService"),
     UserService: Symbol.for("UserService"),
+    GroupService: Symbol.for("GroupService")
 };

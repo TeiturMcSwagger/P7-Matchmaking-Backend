@@ -1,13 +1,42 @@
-import { Container } from "inversify";
-import {BookService, GroupService, UserService, TYPES} from "../services/interfaces";
-import {ExampleService} from "../services/example/exampleService";
-import {MongoGroupService} from "../services/group/mongoGroupService";
-import {MongoUserService} from "../services/users/mongoUserService";
+import { Container, inject, injectable, decorate, interfaces } from "inversify";
+import {
+  autoProvide,
+  makeProvideDecorator,
+  makeFluentProvideDecorator
+} from "inversify-binding-decorators";
+import { Controller } from "tsoa";
+import {
+  BookService,
+  GroupService,
+  TYPES,
+  UserService
+} from "../services/interfaces";
+import {
+  MongoUserService,
+  MongoGroupService,
+  ExampleService
+} from "../services";
 
+decorate(injectable(), Controller);
 
-const AppContainer = new Container();
-AppContainer.bind<BookService>(TYPES.BookService).to(ExampleService);
-AppContainer.bind<GroupService>(TYPES.GroupService).to(MongoGroupService);
-AppContainer.bind<UserService>(TYPES.UserService).to(MongoUserService);
+type Identifier =
+  | string
+  | symbol
+  | interfaces.Newable<any>
+  | interfaces.Abstract<any>;
 
-export { AppContainer };
+const iocContainer = new Container();
+
+iocContainer.bind<BookService>(TYPES.BookService).to(ExampleService);
+iocContainer.bind<GroupService>(TYPES.GroupService).to(MongoGroupService);
+iocContainer.bind<UserService>(TYPES.UserService).to(MongoUserService);
+
+const provide = makeProvideDecorator(iocContainer);
+const fluentProvider = makeFluentProvideDecorator(iocContainer);
+
+const provideNamed = (identifier: Identifier, name: string) => fluentProvider(identifier).whenTargetNamed(name).done();
+
+const provideSingleton = (identifier: Identifier) => fluentProvider(identifier).inSingletonScope().done();
+
+export { iocContainer, autoProvide, provide, provideSingleton, provideNamed, inject, decorate, injectable };
+
