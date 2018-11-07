@@ -13,6 +13,7 @@ export interface GroupService {
     getFittingGroups(size: number) : Promise<IGroup[]>;
     leaveGroup(group_id : String, user_id : String) : any;
     joinGroup(group_id : String, user_id : String) : any;
+    removeGroup(group_id: string);
 }
 
 export interface UserService {

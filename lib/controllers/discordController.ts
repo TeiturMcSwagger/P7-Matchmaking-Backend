@@ -1,9 +1,10 @@
-import { Client, Guild, Message, GuildMember, CategoryChannel, TextChannel, VoiceChannel, Role } from "discord.js";
+import { Client, Guild, Message, GuildMember, CategoryChannel, TextChannel, VoiceChannel, Role, Channel, GuildChannel } from "discord.js";
 import { inject } from "inversify";
 import { TYPES, UserService, GroupService } from "../services/interfaces";
 import { provideSingleton } from "../common/inversify.config";
 import { IGroup } from "models/groupModel";
 import { IUser } from "models/userModel";
+import { text } from "body-parser";
 
 @provideSingleton(DiscordController)
 export class DiscordController {
@@ -80,6 +81,29 @@ export class DiscordController {
                 console.log(error.message);
             }
         });
+    }
+
+    public async removeChannels(textchannel_id : string, voicechannel_id : string, group_id : string) : Promise<boolean>{
+        
+        let result : boolean;
+        try{
+            const textchannel : GuildChannel = this.guild.channels.get(textchannel_id);
+            const voicechannel : GuildChannel = this.guild.channels.get(voicechannel_id);
+            
+            // Delete the channels
+            await textchannel.delete();
+            await voicechannel.delete();
+
+            // Delete the roles
+            await this.guild.roles.find((role : Role) => role.name === group_id).delete();
+
+            // If success, we can say true
+            result = true;
+        }catch(error){
+            result = false;
+        }
+
+        return result;
     }
 
     public async leaveGroup(discordId: string, groupId: string): Promise<Object> {

@@ -49,4 +49,8 @@ export class MongoGroupService implements GroupService {
         // This finds the group, where both the group_id and user_id matches, and $pulls out the entry from the users array. 
         return this.groupsModel.findOneAndUpdate({_id: group_id}, {$pull: {users: {$in: [user_id]}}}, {new: true});       
     }
+
+    public removeGroup(group_id : string){ 
+        return this.groupsModel.findOneAndDelete({"_id": group_id});
+    }
 }

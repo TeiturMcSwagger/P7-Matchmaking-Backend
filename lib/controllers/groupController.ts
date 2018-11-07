@@ -234,4 +234,22 @@ export class GroupController extends Controller {
       return null;
     }
   }
+
+  @Post("remove")
+  public async removeGroup(@Body() body : {group_id : string}) : Promise<IGroup> {
+    let result : IGroup;
+    
+    try{
+       result = await this.groupService.removeGroup(body.group_id);
+
+       // Delete discord channels
+       if(!(await this.discordController.removeChannels(result.discordChannels[0], result.discordChannels[1], body.group_id))){
+        throw new ApiError({message: "Couldn't remove Discord channels, but the group has been deleted", statusCode: 404, name: "DiscordChannelsCouldNotBeRemovedError"});
+       }
+    }catch(error){
+      throw new ApiError({message: "Couldn't remove group", statusCode: 404, name: "GroupCouldNotBeRemovedError"});
+    }
+
+    return result;
+  }
 }
