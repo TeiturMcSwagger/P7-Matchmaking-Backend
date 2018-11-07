@@ -29,7 +29,7 @@ export class MongoGroupService implements GroupService {
     }
     
     public joinGroup(group_id: string, user_id: string) : mongoose.DocumentQuery<any, any> {
-        return this.groupsModel.findByIdAndUpdate({_id: group_id}, {$push: {users: user_id}}, {new : true});    
+        return this.groupsModel.findOneAndUpdate({_id: group_id}, {$push: {users: user_id}}, {new : true});    
     }
 
     // leaveGroup(group_id) | Checks whether the group id exist in the database

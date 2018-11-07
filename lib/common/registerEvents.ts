@@ -11,24 +11,16 @@ export default function(io : IO.Server){
         // registerHandlers(io, socket);
     });
 
-    
-    const groupsHandler : GroupsHandler = new GroupsHandler(io);
-    // let groupEventHandler = new EventHandleMap();
-    // groupEventHandler.eventHandleMapping = {
-    //     'getGroups'         : groupsHandler.getGroups,
-    //     'getGroup'          : groupsHandler.getGroup,
-    //     'createGroup'       : groupsHandler.createGroup,
-    //     'leaveGroup'        : groupsHandler.leaveGroup,
-    //     'verifyInvite'      : groupsHandler.verifyInvite,
-    //     'joinGroup'         : groupsHandler.joinGroup,
 
-    //     'incTimer'          : groupsHandler.incTimer,
-    //     'subscribeToTimer'  : groupsHandler.subscribeToTimer,
-    // }
+    // map namespaces to handler types
+    // run through the mappings and create register the handles generically
+    // {}
+    // {'/groups' : GroupsHandler},
+    // {'/users' : UsersHandler}
 
     // Add event handler for namespace '/groups'
     io.of('/groups').on('connection', (socket : IO.Socket) => {
         logger.debug('User connected to the "groups" namespace!');
-        registerHandlers(io, socket, groupsHandler);
+        registerHandlers(io, socket, GroupsHandler);
     });
 }
