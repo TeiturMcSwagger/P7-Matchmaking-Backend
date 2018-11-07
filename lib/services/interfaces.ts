@@ -10,6 +10,7 @@ export interface GroupService {
     createGroup(group: any): Promise<IGroup>;
     getGroup(group_id : String) : Promise<IGroup>;
     getGroupsByUserId(user_id : String) : Promise<IGroup[]>;
+    getFittingGroups(size: number) : Promise<IGroup[]>;
     leaveGroup(group_id : String, user_id : String) : any;
     joinGroup(group_id : String, user_id : String) : any;
 }
