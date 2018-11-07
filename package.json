@@ -12,7 +12,8 @@
     "dev": "npm run build:tsoa && nodemon ./lib/server.ts | pino-pretty",
     "withswagger": "cp ./build/swagger -r ./dist/build/",
     "start": "npm run withswagger && node ./dist/lib/server.js",
-    "startdev": "npm run withswagger && pm2 node ./dist/lib/server.js",
+    "restartprod": "pm2 restart all",
+    "startdev": "npm run withswagger && pm2 start node ./dist/lib/server.js -i max — name=\”P7-Matchmaking”",
     "prod": "npm run build && npm run startdev",
     "test": "jest"
   },
