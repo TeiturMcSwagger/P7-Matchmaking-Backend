@@ -10,14 +10,16 @@ import {
   Query,
   Body,
   Response,
-  Tags
+  Tags,
 } from "tsoa";
 import { provideSingleton, inject, provide } from "../common/inversify.config";
 import { GroupService, TYPES, UserService } from "../services/interfaces";
 import { Group, IGroupUser } from "../models/groupModel";
 import { get } from "https";
 import { promises } from "fs";
-import { twoGroups } from "../interfaces/interfaces"
+import { twoGroups } from "../interfaces/interfaces";
+import { ApiError } from "./ErrorHandler";
+import { response } from "inversify-express-utils";
 
 @Tags("groups")
 @Route("groups")
@@ -40,45 +42,34 @@ export class GroupController extends Controller {
     return await this.groupService.getFittingGroups(available_spots);
   }
 
-  @Post()
+  @Post("/create")
   public async createGroup(@Body() body: Group) {
-    try {
-      const group = body;
-      const result = await this.groupService.createGroup(group);
-      return result;
-    } catch (e) {
-      return e.message;
-    }
+    return await this.groupService.createGroup(body);
   }
 
-  @Post("join")
+  @Response<ApiError>(404,"Not valid state (user already in group/user not found)")
+  @Post("/join")
   public async joinGroup(@Body() body: IGroupUser): Promise<any> {
     // Post request group id and username attributes is stored..
     const group_id: string = body.group_id;
     const user_id: string = body.user_id;
 
-    // Get response from service
-    let result: string;
-    try {
       // Check if user is in group
       const group = await this.groupService.getGroup(group_id);
       if (group.users.indexOf(user_id) > -1) {
-        throw new Error(
-          `The user with the userID: ${user_id} is already in the group: ${group_id}.`
+        throw new ApiError({ 
+          message : `The user with the userID: ${user_id} is already in the group: ${group_id}.`, statusCode : 404, name: ""}
         );
       }
       // Check if user_id is a user
       const user = await this.userService.getUserById(user_id);
       if (user == null) {
-        throw new Error(`The user with the userID: ${user_id} was not found.`);
+        throw new ApiError({ 
+          message : `The user with the userID: ${user_id} was not found.`, statusCode : 404, name: ""}
+        );
       }
 
-      result = await this.groupService.joinGroup(group_id, user_id);
-    } catch (error) {
-      result = error.message;
-    }
-
-    return result;
+      return this.groupService.joinGroup(group_id, user_id);
   }
 
   // leaveGroup(req, res) | Get's post data from the route, and processes the post request.
@@ -90,82 +81,66 @@ export class GroupController extends Controller {
     let user_id: string = body.user_id;
 
     // Get response from service
-    let result;
-    try {
-      result = await this.groupService.leaveGroup(group_id, user_id);
-    } catch (error) {
-      result = error.message;
-    }
-    // Return result
-    return result;
+    return await this.groupService.leaveGroup(group_id, user_id);
   }
 
+  @Response<ApiError>(404,"Group not found")
   @Get("{group_id}")
-  public async getGroup(group_id: string): Promise<IResponse<Group>> {
-    var group = await this.groupService.getGroup(group_id);
-    var response = new BEResponse(group);
-
-    // Invalid group id
-    if (group == null) {
-      response.error = "No group exists with group id " + group_id;
-      response.statuscode = 1;
-    }
-
-    // Return group obj (null if group_id does not correspond to a group in the DB)
-    return response;
+  public async getGroup(group_id: string): Promise<Group> {
+    const res = await this.groupService.getGroup(group_id);
+    if (res == null){
+      throw new ApiError({ 
+        message : `The grou with the groupID: ${group_id} was not found.`, statusCode : 404, name: "Not found"}
+      );
+    }  
+    return res;
   }
   @Get("{group_id}/{invite_id}")
   public async verifyInvite(
     group_id: string,
     invite_id: string
-  ): Promise<IResponse<Group>> {
+  ): Promise<Group> {
     // 1) Check if a group exists with id 'group_id'
     var group = await this.groupService.getGroup(group_id);
-    var response = new BEResponse(group);
 
     // TODO: Correctly/appropriately handle incorrect group ids
     // What should we send as response? How should we handle it in the frontend?
     if (group == null) {
-      response.error = "No groups exist with id " + group_id;
-      response.statuscode = 1;
-      return response;
+      throw new ApiError({ 
+        message : "No groups exist with id " + group_id, statusCode : 404, name: "Not found"}
+      );
     }
 
     // 2) Check if the 'invite_id' is valid for the group
     // TODO: Correctly/appropriately handle incorrect invite ids
     // Same as above: What do we send, how do we handle it in the frontend?
     if (group.invite_id != invite_id) {
-      response.error = "Invalid invite id for group with id " + group_id;
-      response.statuscode = 2;
-      return response;
+      throw new ApiError({ 
+        message : "Invalid invite id for group with id " + group_id, statusCode : 404, name: "Invalid invite id"}
+      );
     }
-    response.error = "Joined group";
-    response.data = group;
 
     // The group id is valid and the invite id is correct w.r.t. the group.
     // Send response to frontend to redirect the page to the "join group" url
     // The "join group" controller will handle checks such as is the group full / does the user meet the requirements
     // TODO: Handle in frontend
-    return response;
+    return group;
   }
 
   private isMergeCompatible(fromGroup: Group, toGroup: Group): boolean {
-    
     const newGroupSize = fromGroup.users.length + toGroup.users.length;
-    if(toGroup.maxSize >= newGroupSize){
+    if (toGroup.maxSize >= newGroupSize) {
       return false;
     }
     if (fromGroup.game != toGroup.game) {
-      return false;  
-    } 
-    else {
+      return false;
+    } else {
       return true;
     }
   }
 
   @Post("merge")
-  public async mergeTwoGroups(@Body() body: twoGroups):Promise<Group>{
-      
+  public async mergeTwoGroups(@Body() body: twoGroups): Promise<Group> {
     const fromGroup = await this.groupService.getGroup(body.from_id);
     const toGroup = await this.groupService.getGroup(body.to_id);
     const newGroup = new Group();

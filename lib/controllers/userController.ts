@@ -9,7 +9,7 @@ import {
   Query,
   Body,
   Response,
-  Tags
+  Tags,
 } from "tsoa";
 import { ApiError } from "./ErrorHandler";
 import { provideSingleton, inject, provide } from "../common/inversify.config";
@@ -26,32 +26,34 @@ export class UserController extends Controller {
     super();
   }
 
-  @Get()
+  @Get("/")
   public async getAllUsers(): Promise<IUser[]> {
     const users = await this.userService.getAllUsers();
-    console.log("USERSSS", users);
     return users;
   }
 
   @Response<ApiError>("404", "User not found")
   @Get("{user_id}")
   public async getUserById(user_id: string): Promise<IUser> {
-
     const result = await this.userService.getUserById(user_id);
     if (result == null)
       throw new ApiError({
         statusCode: 404,
         name: "Find user Error",
         message: "User not found",
-        fields: null
+        fields: null,
       });
     return result;
   }
 
-  @Post("/create")
   /* Creates a user based on the body of the request */
-  public async createUser(@Body() body: IUser): Promise<void> {
-    let username = body.name;
-    return await this.userService.createUser(username);
+  // Don't use IUser in body since it will throw a validation error saying created is required
+  @Post("/create")
+  public async createUser(@Body()
+  body: {
+    name: string;
+    discordId: string;
+  }): Promise<IUser> {
+    return this.userService.createUser(body.name, body.discordId);
   }
 }
