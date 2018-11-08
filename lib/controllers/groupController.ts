@@ -20,6 +20,7 @@ import { promises } from "fs";
 import { twoGroups } from "../interfaces/interfaces";
 import { ApiError } from "./ErrorHandler";
 import { response } from "inversify-express-utils";
+import logger from "../common/logger";
 
 @Tags("groups")
 @Route("groups")
@@ -37,9 +38,9 @@ export class GroupController extends Controller {
     return await this.groupService.getGroups();
   }
  //groups/2
-  @Get("fitting/{available_spots}")
-  public async getFittingGroups(available_spots : number): Promise<Group[]> {
-    return await this.groupService.getFittingGroups(available_spots);
+  @Get("fitting/{available_spots}/{game}")
+  public async getFittingGroups(available_spots : number, game : string): Promise<Group[]> {
+    return await this.groupService.getFittingGroups(available_spots, game);
   }
 
   @Post("/create")
@@ -129,10 +130,12 @@ export class GroupController extends Controller {
 
   private isMergeCompatible(fromGroup: Group, toGroup: Group): boolean {
     const newGroupSize = fromGroup.users.length + toGroup.users.length;
-    if (toGroup.maxSize >= newGroupSize) {
+    if (toGroup.maxSize < newGroupSize) {
+      // logger.info("MS: " + toGroup.maxSize + " - - new GS: " + newGroupSize);
       return false;
     }
     if (fromGroup.game != toGroup.game) {
+      // logger.info("Game types not compatible: " + fromGroup.game + "/" + toGroup.game)
       return false;
     } else {
       return true;

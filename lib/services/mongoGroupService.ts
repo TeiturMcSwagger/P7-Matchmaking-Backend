@@ -18,8 +18,9 @@ export class MongoGroupService implements GroupService {
         return await this.groupsModel.find();
     }
 
-    public async getFittingGroups(size: number): Promise<Group[]> {
-        return await this.groupsModel.find({$where: "this.users.length > 0 && this.users.length <= " + size})
+    public async getFittingGroups(size: number, game: string): Promise<Group[]> {
+        return await this.groupsModel.find({$where: "this.users.length > 0 && this.users.length <= " + size} && {game : game}); //({game : game})
+        // return await this.groupsModel.find({$where: "this.users.length > 0 && this.users.length <= " + size} && {$where: "this.group.game === this.group.game"})
     }
 
     public createGroup(group): Promise<any> {
