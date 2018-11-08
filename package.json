@@ -10,10 +10,10 @@
     "build:swagger": "tsoa swagger",
     "build:routes": "tsoa routes",
     "dev": "npm run build:tsoa && nodemon ./lib/server.ts | pino-pretty",
-    "withswagger": "cp ./build/swagger -r ./dist/build/",
+    "withstatics": "cp ./build/swagger -r ./dist/build/ && cp ./lib/gamelist.json ./dist/lib/",
     "start": "npm run withswagger && node ./dist/lib/server.js",
     "restartprod": "pm2 restart all",
-    "startdev": "npm run withswagger && pm2 start ./dist/lib/server.js -i 0 --name P7-Matchmaking",
+    "startdev": "npm run withstatics && pm2 start ./dist/lib/server.js -i 0 --name P7-Matchmaking",
     "prod": "npm run build && npm run startdev",
     "test": "jest"
   },
