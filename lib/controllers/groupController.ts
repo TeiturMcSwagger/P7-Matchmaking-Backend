@@ -14,7 +14,7 @@ import {
 } from "tsoa";
 import { provideSingleton, inject, provide } from "../common/inversify.config";
 import { GroupService, TYPES, UserService } from "../services/interfaces";
-import { Group, IGroupUser, IUpdateGroupVisibility } from "../models/groupModel";
+import { Group, IGroupUser, IUpdateGroupVisibility, IMongoGroup } from "../models/groupModel";
 import { get } from "https";
 import { promises } from "fs";
 import { twoGroups } from "../interfaces/interfaces";
@@ -165,7 +165,7 @@ export class GroupController extends Controller {
   }
 
   @Post("update")
-  public async updateVisibility(@Body() body: IUpdateGroupVisibility): Promise<Group> {
-    return await this.groupService.updateVisibility(body.group_id, body.value);
+  public async updateVisibility(@Body() body: IMongoGroup): Promise<Group> {
+    return await this.groupService.updateVisibility(body);
   }
 }
