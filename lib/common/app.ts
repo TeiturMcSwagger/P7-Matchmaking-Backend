@@ -69,7 +69,7 @@ export default class App {
 
     const swaggerDocument = require("../../build/swagger/swagger.json");
 
-    app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+    app.use("/api/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
   }
   //Prints error to input (dev -> terminal, prod -> file)
   errorConfigFunc(app: any): void {

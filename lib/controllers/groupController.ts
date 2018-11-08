@@ -23,7 +23,7 @@ const gameData = require("../gamelist.json");
 import logger from "../common/logger";
 
 @Tags("groups")
-@Route("groups")
+@Route("api/groups")
 @provideSingleton(GroupController)
 export class GroupController extends Controller {
   constructor(
