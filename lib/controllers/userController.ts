@@ -19,7 +19,7 @@ import { IUser, IUserCreate } from "../models/userModel";
 import { TYPES, UserService } from "../services/interfaces";
 
 @Tags("users")
-@Route("users")
+@Route("/api/users")
 @provideSingleton(UserController)
 export class UserController extends Controller {
   constructor(@inject(TYPES.UserService) private userService: UserService) {
