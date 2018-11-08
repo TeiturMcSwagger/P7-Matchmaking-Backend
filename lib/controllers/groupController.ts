@@ -15,7 +15,7 @@ import { promises } from "fs";
 import { twoGroups } from "../interfaces/interfaces";
 import { ApiError } from "./ErrorHandler";
 import { response } from "inversify-express-utils";
-import { MessageEmbed } from "discord.js";
+// import { MessageEmbed } from "discord.js";
 import { DiscordController } from "./discordController";
 import { IUser } from "models/userModel";
 
@@ -230,17 +230,22 @@ export class GroupController extends Controller {
   public async mergeTwoGroups(@Body() body: twoGroups): Promise<IGroup> {
     const fromGroup : IGroup = await this.groupService.getGroup(body.from_id);
     const toGroup : IGroup= await this.groupService.getGroup(body.to_id);
-    let newGroup : IGroup;
     const mergeCompatabilty = this.isMergeCompatible(fromGroup, toGroup);
     if (mergeCompatabilty) {
-      toGroup.users.push(...fromGroup.users);
-      newGroup.users = toGroup.users;
-      newGroup.game = toGroup.game;
-      newGroup.name = toGroup.name;
-      newGroup.maxSize = toGroup.maxSize;
-      return this.groupService.createGroup(newGroup);
+
+    // leves the group you're in and joins the groups thats been pushed.
+     fromGroup.users.forEach(async user => {
+      await this.leaveGroup({group_id: fromGroup._id, user_id: user})
+      await this.joinGroup({group_id: toGroup._id, user_id: user})
+    });
+
+    // deletes the group that where ind.
+      await this.removeGroup({group_id: fromGroup._id});
+      
+      return toGroup;
+
     } else {
-      return null;
+      throw new ApiError({message: "Couldn't merge groups", statusCode: 404, name: "CouldNotMergeGroupsError"});
     }
   }
 
@@ -248,16 +253,14 @@ export class GroupController extends Controller {
   public async removeGroup(@Body() body : {group_id : string}) : Promise<IGroup> {
     let result : IGroup;
     
-    try{
+    
        result = await this.groupService.removeGroup(body.group_id);
 
        // Delete discord channels
        if(!(await this.discordController.removeChannels(result.discordChannels[0], result.discordChannels[1], body.group_id))){
         throw new ApiError({message: "Couldn't remove Discord channels, but the group has been deleted", statusCode: 404, name: "DiscordChannelsCouldNotBeRemovedError"});
        }
-    }catch(error){
-      throw new ApiError({message: "Couldn't remove group", statusCode: 404, name: "GroupCouldNotBeRemovedError"});
-    }
+    
 
     return result;
   }

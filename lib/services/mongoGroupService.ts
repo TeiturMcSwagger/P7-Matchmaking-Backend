@@ -14,6 +14,12 @@ export class MongoGroupService implements GroupService {
         this.groupsModel = mongoose.model("groups", GroupSchema);
     }
 
+    public async updateGroupUsers(group_id: string, newUsers: string[]){
+        let res;
+        newUsers.forEach(u => res = this.groupsModel.findOneAndUpdate({_id: group_id}, {$push: {users: u}}, {new: true}));
+        return res;
+    }
+
     public async getGroups(): Promise<IGroup[]> {
         return await this.groupsModel.find();
     }

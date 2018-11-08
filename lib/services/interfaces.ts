@@ -7,6 +7,7 @@ export interface BookService {
 export interface GroupService {
     updateGroupDiscordChannels(channels : string[], groupId : string);
     getGroups(): Promise<IGroup[]>;
+    updateGroupUsers(group_id: string, newUsers: string[]);
     createGroup(group: any): Promise<IGroup>;
     getGroup(group_id : String) : Promise<IGroup>;
     getGroupsByUserId(user_id : String) : Promise<IGroup[]>;
