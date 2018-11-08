@@ -2,18 +2,18 @@ import * as IO from 'socket.io';
 import logger from '../common/logger';
 import Handler from './handler';
 import { GroupService, TYPES, UserService } from "../services/interfaces";
-import { IGroup, IGroupUser, IMongoGroup } from "../models/groupModel";
-import { inject, lazyInject } from '../common/inversify.config';
+import { IMongoGroup, IUpdateGroupVisibility } from "../models/groupModel";
+import { lazyInject } from '../common/inversify.config';
 import { ADDRGETNETWORKPARAMS } from 'dns';
 import { UV_UDP_REUSEADDR } from 'constants';
 
 export default class GroupsHandler extends Handler {
     @lazyInject(TYPES.GroupService)
-    private groupService : GroupService;
+    private groupService: GroupService;
 
-    private count : number = 22;    
+    private count: number = 22;
 
-    public createGroup = (args : any) : void => {
+    public createGroup = (args: any): void => {
         // Invoke mongoGroupsService createGroup
         // Add socket to room with group_id
         // emit that a group has changed
@@ -21,7 +21,7 @@ export default class GroupsHandler extends Handler {
         //  To room with group_id
     }
 
-    public joinGroup = async (args : {group_id : string, user_id : string}) : Promise<IGroup> => {
+    public joinGroup = async (args: { group_id: string, user_id: string }): Promise<IMongoGroup> => {
         logger.info("Join group invoked with the following args: " + JSON.stringify(args));
         // Invoke mongoGroupsService joinGroup
         const group = await this.groupService.joinGroup(args.group_id, args.user_id);
@@ -38,12 +38,12 @@ export default class GroupsHandler extends Handler {
         // emit that a group has changed
         //  To namespace '/groups'
         //  To room with group_id
-        this.emitGroupChange(group);
+        this.emitGroupChange(group, 'joinGroup');
 
         return group;
     }
 
-    public leaveGroup(args : any) : void {
+    public leaveGroup(args: any): void {
         // Invoke mongoGroupsService leaveGroup
         // Disconnect/remove socket from room with group_id
         // emit that a group has changed
@@ -51,31 +51,39 @@ export default class GroupsHandler extends Handler {
         //  To room with group_id
     }
 
-    public getGroup = (args : any) : void => {}
+    public getGroup = (args: any): void => { }
 
-    public getGroups = (args : any) : void => {}
+    public getGroups = (args: any): void => { }
 
-    public verifyInvite = (args : any) : void => {}
+    public verifyInvite = (args: any): void => { }
 
-    public incTimer = async (args : any) : Promise<void> => {
+    public incTimer = async (args: any): Promise<void> => {
         // let interval = args as number;
         logger.debug(this.Socket.id + ' incremented from ' + this.count);
         this.count++;
         this.emitter(this.IO.of('/groups'), 'timer', this.count);
     }
 
-    public subscribeToTimer = (args : any) : void => {
+    public subscribeToTimer = (args: any): void => {
         logger.debug('client is subscribing to timer at count ', this.count);
         this.emitter(this.IO.of('/groups'), 'timer', this.count);
     }
 
-    private emitGroupChange = (group : IMongoGroup) : void => {
+    private emitGroupChange = (group: IMongoGroup, caller: string): void => {
         // Responsible for emitting to entire '/groups' namespace AND room with group_id
         // Namespace '/groups'
-        this.emitter(this.IO.of('/groups'), 'groupChanged', group);
+        this.emitter(this.IO.of('/groups'), 'groupChanged', { group: group, caller: caller });
 
         // Room for group_id
-        this.emitter(this.IO.to(group._id), 'groupChanged', group);
+        this.emitter(this.IO.to(group._id), 'groupChanged', { group: group, caller: caller });
     }
+
+    public updateVisibility = async (group: IMongoGroup) => {
+        const result = await this.groupService.updateVisibility(group);
+        this.emitGroupChange(result, 'updateVisibility');
+        return result;
+    }
+
+
 
 }

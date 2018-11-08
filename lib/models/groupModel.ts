@@ -4,12 +4,12 @@ import * as randomstring from "randomstring";
 const Schema = mongoose.Schema;
 
 export const GroupSchema = new Schema({
-    name: { 
+    name: {
         type: String,
         required: true,
         minlength: 1,
     },
-    game: { 
+    game: {
         type: String,
         required: true,
         minlength: 1,
@@ -24,22 +24,32 @@ export const GroupSchema = new Schema({
         default: randomstring.generate
     },
     users: {
-        type: [String], 
+        type: [String],
         default: []
     },
+    visible: {
+        type: Boolean,
+        default: false
+    }
 });
 
 
 
-export interface IMongoGroup extends Group, mongoose.Document{}
+export interface IMongoGroup extends Group, mongoose.Document { }
 export class Group {
     name: string;
     game: string;
     maxSize: number;
     users: string[];
     invite_id: string;
+    visible: boolean;
 }
 export interface IGroupUser {
     user_id: string;
     group_id: string;
+}
+
+export interface IUpdateGroupVisibility {
+    group_id: string,
+    value: boolean
 }

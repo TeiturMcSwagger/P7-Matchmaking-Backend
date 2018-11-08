@@ -14,7 +14,7 @@ import {
 } from "tsoa";
 import { provideSingleton, inject, provide } from "../common/inversify.config";
 import { GroupService, TYPES, UserService } from "../services/interfaces";
-import { Group, IGroupUser } from "../models/groupModel";
+import { Group, IGroupUser, IUpdateGroupVisibility } from "../models/groupModel";
 import { get } from "https";
 import { promises } from "fs";
 import { twoGroups } from "../interfaces/interfaces";
@@ -49,29 +49,31 @@ export class GroupController extends Controller {
     return await this.groupService.createGroup(body);
   }
 
-  @Response<ApiError>(404,"Not valid state (user already in group/user not found)")
+  @Response<ApiError>(404, "Not valid state (user already in group/user not found)")
   @Post("/join")
   public async joinGroup(@Body() body: IGroupUser): Promise<any> {
     // Post request group id and username attributes is stored..
     const group_id: string = body.group_id;
     const user_id: string = body.user_id;
 
-      // Check if user is in group
-      const group = await this.groupService.getGroup(group_id);
-      if (group.users.indexOf(user_id) > -1) {
-        throw new ApiError({ 
-          message : `The user with the userID: ${user_id} is already in the group: ${group_id}.`, statusCode : 404, name: ""}
-        );
+    // Check if user is in group
+    const group = await this.groupService.getGroup(group_id);
+    if (group.users.indexOf(user_id) > -1) {
+      throw new ApiError({
+        message: `The user with the userID: ${user_id} is already in the group: ${group_id}.`, statusCode: 404, name: ""
       }
-      // Check if user_id is a user
-      const user = await this.userService.getUserById(user_id);
-      if (user == null) {
-        throw new ApiError({ 
-          message : `The user with the userID: ${user_id} was not found.`, statusCode : 404, name: ""}
-        );
+      );
+    }
+    // Check if user_id is a user
+    const user = await this.userService.getUserById(user_id);
+    if (user == null) {
+      throw new ApiError({
+        message: `The user with the userID: ${user_id} was not found.`, statusCode: 404, name: ""
       }
+      );
+    }
 
-      return this.groupService.joinGroup(group_id, user_id);
+    return this.groupService.joinGroup(group_id, user_id);
   }
 
   // leaveGroup(req, res) | Get's post data from the route, and processes the post request.
@@ -86,15 +88,16 @@ export class GroupController extends Controller {
     return await this.groupService.leaveGroup(group_id, user_id);
   }
 
-  @Response<ApiError>(404,"Group not found")
+  @Response<ApiError>(404, "Group not found")
   @Get("{group_id}")
   public async getGroup(group_id: string): Promise<Group> {
     const res = await this.groupService.getGroup(group_id);
-    if (res == null){
-      throw new ApiError({ 
-        message : `The grou with the groupID: ${group_id} was not found.`, statusCode : 404, name: "Not found"}
+    if (res == null) {
+      throw new ApiError({
+        message: `The grou with the groupID: ${group_id} was not found.`, statusCode: 404, name: "Not found"
+      }
       );
-    }  
+    }
     return res;
   }
   @Get("{group_id}/{invite_id}")
@@ -108,8 +111,9 @@ export class GroupController extends Controller {
     // TODO: Correctly/appropriately handle incorrect group ids
     // What should we send as response? How should we handle it in the frontend?
     if (group == null) {
-      throw new ApiError({ 
-        message : "No groups exist with id " + group_id, statusCode : 404, name: "Not found"}
+      throw new ApiError({
+        message: "No groups exist with id " + group_id, statusCode: 404, name: "Not found"
+      }
       );
     }
 
@@ -117,8 +121,9 @@ export class GroupController extends Controller {
     // TODO: Correctly/appropriately handle incorrect invite ids
     // Same as above: What do we send, how do we handle it in the frontend?
     if (group.invite_id != invite_id) {
-      throw new ApiError({ 
-        message : "Invalid invite id for group with id " + group_id, statusCode : 404, name: "Invalid invite id"}
+      throw new ApiError({
+        message: "Invalid invite id for group with id " + group_id, statusCode: 404, name: "Invalid invite id"
+      }
       );
     }
 
@@ -157,5 +162,10 @@ export class GroupController extends Controller {
     } else {
       return null;
     }
+  }
+
+  @Post("update")
+  public async updateVisibility(@Body() body: IUpdateGroupVisibility): Promise<Group> {
+    return await this.groupService.updateVisibility(body.group_id, body.value);
   }
 }
