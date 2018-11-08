@@ -50,7 +50,7 @@ export class GroupController extends Controller {
     return await gameData;
   }
 
-  @Post()
+  @Post("create")
   public async createGroup(@Body() body: IGroupCreateBody) {
     // Create a group in the database, and create a Discord server for the specific group
 		try {
@@ -155,6 +155,16 @@ export class GroupController extends Controller {
     try {
       result = await this.groupService.leaveGroup(group_id, user_id);
     } catch (error) {
+      result = error.message;
+    }
+
+    // Check for group removal
+    try{
+      if(result.users.length < 1){
+        result = await this.removeGroup({"group_id": group_id});
+        console.log("Should be removed: " + group_id);
+      }
+    }catch(error){
       result = error.message;
     }
 

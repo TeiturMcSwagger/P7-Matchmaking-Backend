@@ -18,7 +18,7 @@ export class MongoGroupService implements GroupService {
         return await this.groupsModel.find();
     }
 
-    public updateGroupDiscordChannels(channels : string[], groupId : string){
+    public updateGroupDiscordChannels(channels : string[], groupId : string) {
         return this.groupsModel.findOneAndUpdate({_id: groupId}, {$push: {discordChannels: channels}}, {new: true});
     }
 

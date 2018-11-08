@@ -19,7 +19,7 @@ export interface GroupService {
 export interface UserService {
     getUserById(id : string) : Promise<IUser>
     getAllUsers() : Promise<IUser[]>,
-    createUser(name: string, discordId : string) : any ,
+    createUser(name: string, discordId : string) : IUser ,
     getUserByDiscordId(discord_id : string) : any
 }
 
