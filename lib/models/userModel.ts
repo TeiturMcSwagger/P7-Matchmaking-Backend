@@ -8,13 +8,18 @@ export const UserSchema : mongoose.Schema = new Schema({
         required: [true, "a name is required"],
         min: [1, "a name requires minimum 1 letter"] 
     },
-    created: Date,
-    discordId: String,
+    discordId: {
+        type: String,
+        requried: [true, "a discord name is required"],
+        min: [6, "a discord id is guaranteed to be more than 6 characters"]
+    },
+    created: String
 });
 
-export interface IMongoUser extends IUser, mongoose.Document{}
+export interface IMongoUser extends IUser, mongoose.Document{_id: string}
 export interface IUser {
+    _id: string,
     name: string,
-    discordId: string,
     created: Date,
+    discordId: string
 }

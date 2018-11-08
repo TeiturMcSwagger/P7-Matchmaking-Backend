@@ -12,7 +12,7 @@ export const GroupSchema = new Schema({
     game: { 
         type: String,
         required: true,
-        minlength: 1,
+        
     },
     maxSize: {
         type: Number,
@@ -27,19 +27,35 @@ export const GroupSchema = new Schema({
         type: [String], 
         default: []
     },
+    discordChannels: {
+        type: [String],
+        default: []
+    }
 });
 
-
-
-export interface IMongoGroup extends Group, mongoose.Document{}
-export class Group {
+export interface IMongoGroup extends IGroup, mongoose.Document{_id: string}
+export interface IGroup {
+    _id: string;
+    discordChannels: string[];
     name: string;
     game: string;
     maxSize: number;
     users: string[];
     invite_id: string;
 }
+
+export interface IGroupCreateBody {
+    name: string,
+    game: string,
+    maxSize: number
+}
+
 export interface IGroupUser {
     user_id: string;
     group_id: string;
+}
+
+export interface IGame {
+    name: string,
+    maxSize: number
 }

@@ -11,7 +11,8 @@
         "emitDecoratorMetadata": true,
         "lib": ["es6"],
         "types": ["reflect-metadata"],
-        "baseUrl": "./lib"
+        "baseUrl": "./lib",
+        "allowJs": true
     },
     "include": [
         "lib/**/*.ts"

@@ -17,6 +17,7 @@ import {
 import { iocContainer } from "./inversify.config";
 import * as swaggerUi from "swagger-ui-express";
 import { RegisterRoutes } from "../../build/routes";
+import { DiscordController } from "../controllers";
 
 export default class App {
   public app: express.Application;
@@ -25,6 +26,7 @@ export default class App {
   constructor() {
     this.app = express();
     this.app.use(this.allowCors);
+    var discord = iocContainer.get<DiscordController>(DiscordController)
     this.server = new InversifyExpressServer(
       iocContainer,
       null,
