@@ -2,10 +2,9 @@ import * as IO from 'socket.io';
 import logger from '../common/logger';
 import Handler from './handler';
 import { GroupService, TYPES, UserService } from "../services/interfaces";
-import { IMongoGroup, IUpdateGroupVisibility } from "../models/groupModel";
+import { IMongoGroup } from "../models/groupModel";
 import { lazyInject } from '../common/inversify.config';
-import { ADDRGETNETWORKPARAMS } from 'dns';
-import { UV_UDP_REUSEADDR } from 'constants';
+
 
 export default class GroupsHandler extends Handler {
     @lazyInject(TYPES.GroupService)
