@@ -21,6 +21,7 @@ import { IUser } from "models/userModel";
 
 const gameData = require("../gamelist.json");
 
+import logger from "../common/logger";
 
 @Tags("groups")
 @Route("groups")
@@ -38,11 +39,10 @@ export class GroupController extends Controller {
   public async getGroups(): Promise<IGroup[]> {
     return await this.groupService.getGroups();
   }
-  //groups/2
-  @Get("fitting/{group_size}")
-  public async getFittingGroups(group_size: number): Promise<IGroup[]> {
-    const fittingSize = 5 - group_size;
-    return await this.groupService.getFittingGroups(fittingSize);
+ //groups/2
+  @Get("fitting/{available_spots}/{game}")
+  public async getFittingGroups(available_spots : number, game : string): Promise<IGroup[]> {
+    return await this.groupService.getFittingGroups(available_spots, game);
   }
 
   @Get("game")
@@ -214,10 +214,12 @@ export class GroupController extends Controller {
 
   private isMergeCompatible(fromGroup: IGroup, toGroup: IGroup): boolean {
     const newGroupSize = fromGroup.users.length + toGroup.users.length;
-    if (toGroup.maxSize >= newGroupSize) {
+    if (toGroup.maxSize < newGroupSize) {
+      // logger.info("MS: " + toGroup.maxSize + " - - new GS: " + newGroupSize);
       return false;
     }
     if (fromGroup.game != toGroup.game) {
+      // logger.info("Game types not compatible: " + fromGroup.game + "/" + toGroup.game)
       return false;
     } else {
       return true;

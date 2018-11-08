@@ -22,9 +22,11 @@ export class MongoGroupService implements GroupService {
         return this.groupsModel.findOneAndUpdate({_id: groupId}, {$push: {discordChannels: channels}}, {new: true});
     }
 
-    public async getFittingGroups(size: number): Promise<IGroup[]> {
-        return await this.groupsModel.find({$where: "this.users.length > 0 && this.users.length <= " + size})
+    public async getFittingGroups(size: number, game: string): Promise<IGroup[]> {
+        return await this.groupsModel.find({$where: "this.users.length > 0 && this.users.length <= " + size} && {game : game}); //({game : game})
+        // return await this.groupsModel.find({$where: "this.users.length > 0 && this.users.length <= " + size} && {$where: "this.group.game === this.group.game"})
     }
+    
 
     public createGroup(group): Promise<any> {
         group.invite_id = randomstring.generate();
