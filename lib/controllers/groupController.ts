@@ -49,7 +49,7 @@ export class GroupController extends Controller {
     return await gameData;
   }
 
-  @Post()
+  @Post("create")
   public async createGroup(@Body() body: IGroupCreateBody) {
     // Create a group in the database, and create a Discord server for the specific group
 		try {
