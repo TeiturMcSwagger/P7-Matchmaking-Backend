@@ -2,7 +2,7 @@ import * as IO from 'socket.io';
 import logger from '../common/logger';
 import Handler from './handler';
 import { GroupService, TYPES, UserService } from "../services/interfaces";
-import { IGroup, IGroupUser, IMongoGroup } from "../models/groupModel";
+import { IMongoGroup } from "../models/groupModel";
 import { inject, lazyInject } from '../common/inversify.config';
 import { ADDRGETNETWORKPARAMS } from 'dns';
 import { UV_UDP_REUSEADDR } from 'constants';
@@ -21,7 +21,7 @@ export default class GroupsHandler extends Handler {
         //  To room with group_id
     }
 
-    public joinGroup = async (args : {group_id : string, user_id : string}) : Promise<IGroup> => {
+    public joinGroup = async (args : {group_id : string, user_id : string}) : Promise<IMongoGroup> => {
         logger.info("Join group invoked with the following args: " + JSON.stringify(args));
         // Invoke mongoGroupsService joinGroup
         const group = await this.groupService.joinGroup(args.group_id, args.user_id);
