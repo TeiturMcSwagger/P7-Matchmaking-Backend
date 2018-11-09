@@ -1,4 +1,4 @@
-import { IGroup, IMongoGroup } from "models/groupModel";
+import { IGroup, IMongoGroup, IPersistedGroup } from "models/groupModel";
 import { IUser } from "models/userModel";
 import { Server } from 'socket.io';
 
@@ -14,7 +14,7 @@ export interface GroupService {
     getGroup(group_id: String): Promise<IMongoGroup>;
     leaveGroup(group_id: String, user_id: String): Promise<IMongoGroup>;
     joinGroup(group_id: String, user_id: String): Promise<IMongoGroup>;
-    updateVisibility(group: IGroup): Promise<IMongoGroup>;
+    updateVisibility(group: IPersistedGroup): Promise<IMongoGroup>;
     updateGroupDiscordChannels(channels: string[], groupId: string): Promise<IMongoGroup>;
     updateGroupUsers(group_id: string, newUsers: string[]): Promise<IMongoGroup>;
     getGroupsByUserId(user_id: String): Promise<IMongoGroup[]>;

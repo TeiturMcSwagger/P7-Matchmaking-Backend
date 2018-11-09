@@ -30,16 +30,23 @@ export const GroupSchema = new Schema({
     visible: {
         type: Boolean,
         default: false
-    }
-});
-
-
-// export interface IPersistedGroup extends Group { _id: string; }
-export class Group {
+    },
     discordChannels: {
         type: [String],
         default: []
     }
+});
+
+
+export interface IPersistedGroup extends Group { _id: string; }
+export class Group {
+    discordChannels: string[];
+    name: string;
+    game: string;
+    maxSize: number;
+    users: string[];
+    invite_id: string;
+    visible: boolean;
 };
 
 export interface IMongoGroup extends IGroup, mongoose.Document { _id: string }

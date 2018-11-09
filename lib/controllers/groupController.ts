@@ -9,7 +9,7 @@ import {
 } from "tsoa";
 import { provideSingleton, inject, provide } from "../common/inversify.config";
 import { GroupService, TYPES, UserService } from "../services/interfaces";
-import { IGroup, IGroupUser, IGroupCreateBody, IGame, IMongoGroup } from "../models/groupModel";
+import { IGroup, IGroupUser, IGroupCreateBody, IGame, IMongoGroup, IPersistedGroup } from "../models/groupModel";
 import { get } from "https";
 import { promises } from "fs";
 import { twoGroups } from "../interfaces/interfaces";
@@ -266,7 +266,7 @@ export class GroupController extends Controller {
     }
 
     @Post("update")
-    public async updateVisibility(@Body() body: IGroup): Promise<IMongoGroup> {
+    public async updateVisibility(@Body() body: IPersistedGroup): Promise<IPersistedGroup> {
         return await this.groupService.updateVisibility(body);
     }
 

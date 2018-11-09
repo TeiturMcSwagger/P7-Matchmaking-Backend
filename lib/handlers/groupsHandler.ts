@@ -67,6 +67,9 @@ export default class GroupsHandler extends Handler {
 
         const group: IMongoGroup = await this.groupService.getGroup(args.group_id);
 
+        // Is the group now empty?
+        // If so, destroy the group and emit that a group has been destroyed
+
         // emit that a group has changed
         //  To namespace '/groups'
         //  To room with group_id
