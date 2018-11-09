@@ -14,12 +14,12 @@ import {
 import { ApiError } from "./ErrorHandler";
 import { provideSingleton, inject, provide } from "../common/inversify.config";
 
-import { IUser } from "../models/userModel";
+import { IUser, IUserCreate } from "../models/userModel";
 
 import { TYPES, UserService } from "../services/interfaces";
 
 @Tags("users")
-@Route("users")
+@Route("/api/users")
 @provideSingleton(UserController)
 export class UserController extends Controller {
   constructor(@inject(TYPES.UserService) private userService: UserService) {
@@ -49,11 +49,22 @@ export class UserController extends Controller {
   /* Creates a user based on the body of the request */
   // Don't use IUser in body since it will throw a validation error saying created is required
   @Post("/create")
-  public async createUser(@Body()
-  body: {
-    name: string;
-    discordId: string;
-  }): Promise<IUser> {
-    return this.userService.createUser(body.name, body.discordId);
+    /* Creates a user based on the body of the request */
+  public async createUser(@Body() body: IUserCreate): Promise<IUser> {
+    // Send json response
+    let name = body.name;
+    let discordId = body.discordId;
+
+    let result;
+    try {
+        // This is the created user response
+        result =  await this.userService.createUser(name, discordId);            
+    } catch (error) {
+        // This is the error response
+        result = error.message;
+    }
+
+    // return json response
+    return result;
   }
 }

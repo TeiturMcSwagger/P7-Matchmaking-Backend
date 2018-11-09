@@ -5,7 +5,7 @@ import { Get, Tags, Route, Controller } from "tsoa";
 import { provideSingleton, inject } from "../common/inversify.config";
 
 @Tags("example")
-@Route("")
+@Route("api")
 @provideSingleton(ExampleController)
 export class ExampleController extends Controller {
   constructor(@inject(TYPES.BookService) private bookService: BookService) {

@@ -6,12 +6,14 @@
         "pretty": true,
         "sourceMap": true,
         "target": "es6",
+        "resolveJsonModule": true,
         "outDir": "./dist",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "lib": ["es6"],
         "types": ["reflect-metadata"],
-        "baseUrl": "./lib"
+        "baseUrl": "./lib",
+        "allowJs": true
     },
     "include": [
         "lib/**/*.ts"
