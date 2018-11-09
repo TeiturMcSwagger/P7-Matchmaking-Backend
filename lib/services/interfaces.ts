@@ -1,4 +1,4 @@
-import { Group, IMongoGroup } from "models/groupModel";
+import { Group, IMongoGroup, IPersistedGroup } from "models/groupModel";
 import { IUser } from "models/userModel";
 import { DocumentQuery } from 'mongoose';
 import { Server } from 'socket.io';
@@ -15,7 +15,7 @@ export interface GroupService {
 
     leaveGroup(group_id: String, user_id: String): any;
     joinGroup(group_id: String, user_id: String): Promise<IMongoGroup>;
-    updateVisibility(group: IMongoGroup): Promise<IMongoGroup>;
+    updateVisibility(group: IPersistedGroup): Promise<IMongoGroup>;
 }
 
 export interface UserService {

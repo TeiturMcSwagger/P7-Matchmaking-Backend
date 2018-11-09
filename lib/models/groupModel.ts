@@ -36,6 +36,7 @@ export const GroupSchema = new Schema({
 
 
 export interface IMongoGroup extends Group, mongoose.Document { }
+export interface IPersistedGroup extends Group { _id: string; }
 export class Group {
     name: string;
     game: string;
@@ -49,7 +50,7 @@ export interface IGroupUser {
     group_id: string;
 }
 
-export interface IUpdateGroupVisibility {
-    group_id: string,
-    value: boolean
-}
+// export interface IUpdateGroupVisibility {
+//     group_id: string,
+//     value: boolean
+// }

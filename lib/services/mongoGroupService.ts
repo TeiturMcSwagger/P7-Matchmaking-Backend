@@ -1,5 +1,5 @@
 import * as mongoose from "mongoose";
-import { GroupSchema, IMongoGroup, Group } from "../models/groupModel";
+import { GroupSchema, IMongoGroup, Group, IPersistedGroup } from "../models/groupModel";
 import { GroupService } from "./interfaces"
 import { injectable } from "inversify";
 import * as randomstring from "randomstring";
@@ -43,7 +43,7 @@ export class MongoGroupService implements GroupService {
         return this.groupsModel.updateOne({ _id: group_id }, { $pull: { users: { $in: [user_id] } } });
     }
 
-    public async updateVisibility(group: IMongoGroup): Promise<IMongoGroup> {
+    public async updateVisibility(group: IPersistedGroup): Promise<IMongoGroup> {
         let value = !group.visible;
         return await this.groupsModel.findByIdAndUpdate({ _id: group._id }, { $set: { visible: value } }, { new: true });
     }
