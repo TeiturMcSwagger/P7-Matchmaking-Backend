@@ -2,7 +2,7 @@ import * as IO from 'socket.io';
 import logger from '../common/logger';
 import Handler from './handler';
 import { GroupService, TYPES, UserService } from "../services/interfaces";
-import { IMongoGroup } from "../models/groupModel";
+import { IMongoGroup, Group } from "../models/groupModel";
 import { lazyInject } from '../common/inversify.config';
 
 
@@ -12,12 +12,27 @@ export default class GroupsHandler extends Handler {
 
     private count: number = 22;
 
-    public createGroup = (args: any): void => {
-        // Invoke mongoGroupsService createGroup
-        // Add socket to room with group_id
-        // emit that a group has changed
-        //  To namespace '/groups'
-        //  To room with group_id
+    public createGroup = async (group: Group): Promise<{ error: boolean, newGroup: Group }> => {
+        const result = { error: false, newGroup: null }
+
+        try {
+            // Invoke mongoGroupsService createGroup
+            result.newGroup = await this.groupService.createGroup(group);
+
+            // Add socket to room with group_id
+            this.Socket.join(result.newGroup._id);
+
+            // emit that a group has changed
+            //  To namespace '/groups'
+            //  To room with group_id
+            this.emitGroupChange(result.newGroup, 'createGroup');
+        }
+        catch{
+            result.error = true;
+        }
+        finally {
+            return result;
+        }
     }
 
     public joinGroup = async (args: { group_id: string, user_id: string }): Promise<IMongoGroup> => {

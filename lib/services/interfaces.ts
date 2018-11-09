@@ -10,7 +10,7 @@ export interface BookService {
 export interface GroupService {
     getGroups(): Promise<Group[]>;
     getFittingGroups(size: number): Promise<Group[]>;
-    createGroup(group: any): Promise<Group>;
+    createGroup(group: any): Promise<IMongoGroup>;
     getGroup(group_id: String): Promise<Group>;
 
     leaveGroup(group_id: String, user_id: String): any;

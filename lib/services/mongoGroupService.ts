@@ -22,7 +22,7 @@ export class MongoGroupService implements GroupService {
         return await this.groupsModel.find({ $where: "this.users.length > 0 && this.users.length <= " + size })
     }
 
-    public createGroup(group): Promise<any> {
+    public createGroup(group): Promise<IMongoGroup> {
         group.invite_id = randomstring.generate();
         group.visible = false;
         return this.groupsModel.create(group);
