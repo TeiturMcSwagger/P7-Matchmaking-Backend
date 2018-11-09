@@ -52,6 +52,8 @@ export class GroupController extends Controller {
   @Post("create")
   public async createGroup(@Body() body: IGroupCreateBody) {
     // Create a group in the database, and create a Discord server for the specific group
+
+    await this.ifExistingGroupsThenThrow(body.users[0])
 		try {
 			const group = body;
 
@@ -90,6 +92,12 @@ export class GroupController extends Controller {
 	}
 }
 
+  private async ifExistingGroupsThenThrow(user_id: string){
+    const existingGroups = await this.groupService.getGroupsByUserId(user_id);
+    if(existingGroups.length != 0) throw new ApiError({ 
+      message : `The user with the userID: ${user_id} is already in a group.`, statusCode : 404, name: "UserAlreadyInAGroupOnJoinGroupError"}
+    );
+  }
   @Post("/join")
 	public async joinGroup(@Body() body: IGroupUser): Promise<any> {
 		// Post request group id and username attributes is stored..
@@ -97,13 +105,14 @@ export class GroupController extends Controller {
 		const user_id: string = body.user_id;
 
 		// Get response from service
-		let result: string;
+    let result: string;
+    await this.ifExistingGroupsThenThrow(user_id);
 		try {
 			// Check if user is in group
       const group = await this.groupService.getGroup(group_id);
       if (group.users.indexOf(user_id) > -1) {
         throw new ApiError({ 
-          message : `The user with the userID: ${user_id} is already in the group: ${group_id}.`, statusCode : 404, name: "UserAlreadyInAGroupOnJoinGroupError"}
+          message : `The user with the userID: ${user_id} is already in the group: ${group_id}.`, statusCode : 404, name: "UserAlreadyInTheGroupOnJoinGroupError"}
         );
       }
 

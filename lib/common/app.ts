@@ -92,7 +92,7 @@ export default class App {
               : { stack: { message: err.stack } }
         });
         logger.info(error);
-        response.send(error);
+        response.status(error.statusCode).send(error);
       }
     );
   }

@@ -47,7 +47,8 @@ export interface IGroup {
 export interface IGroupCreateBody {
     name: string,
     game: string,
-    maxSize: number
+    maxSize: number,
+    users: string[]
 }
 
 export interface IGroupUser {
