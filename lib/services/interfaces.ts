@@ -11,7 +11,7 @@ export interface GroupService {
     getGroups(): Promise<Group[]>;
     getFittingGroups(size: number): Promise<Group[]>;
     createGroup(group: any): Promise<IMongoGroup>;
-    getGroup(group_id: String): Promise<Group>;
+    getGroup(group_id: String): Promise<IMongoGroup>;
 
     leaveGroup(group_id: String, user_id: String): any;
     joinGroup(group_id: String, user_id: String): Promise<IMongoGroup>;

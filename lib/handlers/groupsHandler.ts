@@ -38,6 +38,7 @@ export default class GroupsHandler extends Handler {
     public joinGroup = async (args: { group_id: string, user_id: string }): Promise<IMongoGroup> => {
         logger.info("Join group invoked with the following args: " + JSON.stringify(args));
         // Invoke mongoGroupsService joinGroup
+        logger.info("Group_id : " + args.group_id + "  ---   User_id: " + args.user_id);
         const group = await this.groupService.joinGroup(args.group_id, args.user_id);
 
         /* 
@@ -57,12 +58,19 @@ export default class GroupsHandler extends Handler {
         return group;
     }
 
-    public leaveGroup(args: any): void {
+    public leaveGroup = async (args: { group_id: string, user_id: string }): Promise<void> => {
         // Invoke mongoGroupsService leaveGroup
+        await this.groupService.leaveGroup(args.group_id, args.user_id);
+
         // Disconnect/remove socket from room with group_id
+        this.Socket.leave(args.group_id);
+
+        const group: IMongoGroup = await this.groupService.getGroup(args.group_id);
+
         // emit that a group has changed
         //  To namespace '/groups'
         //  To room with group_id
+        this.emitGroupChange(group, 'leaveGroup');
     }
 
     public getGroup = (args: any): void => { }

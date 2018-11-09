@@ -3,6 +3,7 @@ import { GroupSchema, IMongoGroup, Group, IPersistedGroup } from "../models/grou
 import { GroupService } from "./interfaces"
 import { injectable } from "inversify";
 import * as randomstring from "randomstring";
+import logger from "../common/logger";
 
 mongoose.connect(process.env.MONGOURL, { useNewUrlParser: true });
 
@@ -29,7 +30,9 @@ export class MongoGroupService implements GroupService {
     }
 
     public async getGroup(group_id: String): Promise<IMongoGroup> {
-        return await this.groupsModel.findById(group_id);
+        logger.info("Requested group: " + group_id);
+        const group = await this.groupsModel.findById(group_id);
+        return group;
     }
 
     public async joinGroup(group_id: string, user_id: string): Promise<IMongoGroup> {
