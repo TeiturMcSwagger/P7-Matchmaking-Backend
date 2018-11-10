@@ -4,15 +4,15 @@ import * as randomstring from "randomstring";
 const Schema = mongoose.Schema;
 
 export const GroupSchema = new Schema({
-    name: { 
+    name: {
         type: String,
         required: true,
         minlength: 1,
     },
-    game: { 
+    game: {
         type: String,
         required: true,
-        
+
     },
     maxSize: {
         type: Number,
@@ -24,8 +24,12 @@ export const GroupSchema = new Schema({
         default: randomstring.generate
     },
     users: {
-        type: [String], 
+        type: [String],
         default: []
+    },
+    visible: {
+        type: Boolean,
+        default: false
     },
     discordChannels: {
         type: [String],
@@ -33,7 +37,19 @@ export const GroupSchema = new Schema({
     }
 });
 
-export interface IMongoGroup extends IGroup, mongoose.Document{_id: string}
+
+export interface IPersistedGroup extends Group { _id: string; }
+export class Group {
+    discordChannels: string[];
+    name: string;
+    game: string;
+    maxSize: number;
+    users: string[];
+    invite_id: string;
+    visible: boolean;
+};
+
+export interface IMongoGroup extends IGroup, mongoose.Document { _id: string }
 export interface IGroup {
     _id: string;
     discordChannels: string[];
@@ -42,6 +58,7 @@ export interface IGroup {
     maxSize: number;
     users: string[];
     invite_id: string;
+    visible: boolean;
 }
 
 export interface IGroupCreateBody {

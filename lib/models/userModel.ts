@@ -23,3 +23,8 @@ export interface IUser {
     created: Date,
     discordId: string
 }
+
+export interface IUserCreate {
+    name : string,
+    discordId: string
+}
