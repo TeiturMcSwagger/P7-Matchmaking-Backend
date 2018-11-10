@@ -8,6 +8,14 @@
         "maxSize": 3
     },
     {
+        "name": "Tekken 1v1",
+        "maxSize": 2
+    },
+    {
+        "name": "League of Legends",
+        "maxSize": 5
+    },
+    {
         "name": "Overwatch",
         "maxSize": 6
     }
