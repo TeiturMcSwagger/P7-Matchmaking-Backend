@@ -1,4 +1,4 @@
-import { IGroup, IMongoGroup, IPersistedGroup } from "models/groupModel";
+import { Group, IMongoGroup, PersistedGroup } from "models/groupModel";
 import { IUser } from "models/userModel";
 import { Server } from 'socket.io';
 
@@ -8,13 +8,13 @@ export interface BookService {
 }
 
 export interface GroupService {
-    getGroups(): Promise<IGroup[]>;
-    getFittingGroups(size: number, game: string): Promise<IGroup[]>;
+    getGroups(): Promise<Group[]>;
+    getFittingGroups(size: number, game: string): Promise<Group[]>;
     createGroup(group: any): Promise<IMongoGroup>;
     getGroup(group_id: String): Promise<IMongoGroup>;
     leaveGroup(group_id: String, user_id: String): Promise<IMongoGroup>;
     joinGroup(group_id: String, user_id: String): Promise<IMongoGroup>;
-    updateVisibility(group: IPersistedGroup): Promise<IMongoGroup>;
+    updateVisibility(group: PersistedGroup): Promise<IMongoGroup>;
     updateGroupDiscordChannels(channels: string[], groupId: string): Promise<IMongoGroup>;
     updateGroupUsers(group_id: string, newUsers: string[]): Promise<IMongoGroup>;
     getGroupsByUserId(user_id: String): Promise<IMongoGroup[]>;

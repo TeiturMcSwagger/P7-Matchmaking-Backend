@@ -1,5 +1,5 @@
 import * as mongoose from "mongoose";
-import { GroupSchema, IMongoGroup, IGroup, Group, IPersistedGroup } from "../models/groupModel";
+import { GroupSchema, IMongoGroup, Group, PersistedGroup } from "../models/groupModel";
 import { GroupService } from "./interfaces"
 import { injectable } from "inversify";
 import * as randomstring from "randomstring";
@@ -21,7 +21,7 @@ export class MongoGroupService implements GroupService {
         return res;
     }
 
-    public async getGroups(): Promise<IGroup[]> {
+    public async getGroups(): Promise<Group[]> {
         return await this.groupsModel.find();
     }
 
@@ -29,7 +29,7 @@ export class MongoGroupService implements GroupService {
         return this.groupsModel.findOneAndUpdate({ _id: groupId }, { $push: { discordChannels: channels } }, { new: true });
     }
 
-    public async getFittingGroups(size: number, game: string): Promise<IGroup[]> {
+    public async getFittingGroups(size: number, game: string): Promise<Group[]> {
         return await this.groupsModel.find({ $where: "this.users.length > 0 && this.users.length <= " + size } && { game: game }); //({game : game})
         // return await this.groupsModel.find({$where: "this.users.length > 0 && this.users.length <= " + size} && {$where: "this.group.game === this.group.game"})
     }
@@ -62,7 +62,7 @@ export class MongoGroupService implements GroupService {
         return await this.groupsModel.findOneAndUpdate({ _id: group_id }, { $pull: { users: { $in: [user_id] } } }, { new: true });
     }
 
-    public async updateVisibility(group: IPersistedGroup): Promise<IMongoGroup> {
+    public async updateVisibility(group: PersistedGroup): Promise<IMongoGroup> {
         let value = !group.visible;
         return await this.groupsModel.findByIdAndUpdate({ _id: group._id }, { $set: { visible: value } }, { new: true });
     }

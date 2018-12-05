@@ -37,9 +37,9 @@ export const GroupSchema = new Schema({
     }
 });
 
-
-export interface IPersistedGroup extends Group { _id: string; }
-export class Group {
+interface Persisted {_id: string;}
+export interface PersistedGroup extends Group,Persisted {}
+export interface Group {
     discordChannels: string[];
     name: string;
     game: string;
@@ -49,26 +49,16 @@ export class Group {
     visible: boolean;
 };
 
-export interface IMongoGroup extends IGroup, mongoose.Document { _id: string }
-export interface IGroup {
-    _id: string;
-    discordChannels: string[];
-    name: string;
-    game: string;
-    maxSize: number;
-    users: string[];
-    invite_id: string;
-    visible: boolean;
-}
+export interface IMongoGroup extends Group, mongoose.Document{}
 
-export interface IGroupCreateBody {
+export interface GroupCreateBody {
     name: string,
     game: string,
     maxSize: number,
     users: string[]
 }
 
-export interface IGroupUser {
+export interface GroupUser {
     user_id: string;
     group_id: string;
 }
@@ -76,4 +66,9 @@ export interface IGroupUser {
 export interface IGame {
     name: string,
     maxSize: number
+}
+
+export interface IdPair {
+    fromId : string;
+    toId : string;
 }

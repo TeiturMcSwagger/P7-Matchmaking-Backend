@@ -9,10 +9,9 @@ import {
 } from "tsoa";
 import { provideSingleton, inject, provide } from "../common/inversify.config";
 import { GroupService, TYPES, UserService } from "../services/interfaces";
-import { IGroup, IGroupUser, IGroupCreateBody, IGame, IMongoGroup, IPersistedGroup } from "../models/groupModel";
+import { Group, GroupUser, GroupCreateBody, IGame, IMongoGroup, PersistedGroup, IdPair } from "../models/groupModel";
 import { get } from "https";
 import { promises } from "fs";
-import { twoGroups } from "../interfaces/interfaces";
 import { ApiError } from "./ErrorHandler";
 import { response } from "inversify-express-utils";
 // import { MessageEmbed } from "discord.js";
@@ -37,12 +36,12 @@ export class GroupController extends Controller {
 
     
     @Get()
-    public async getGroups(): Promise<IGroup[]> {
+    public async getGroups(): Promise<Group[]> {
         return await this.groupService.getGroups();
     }
     //groups/2
     @Get("fitting/{available_spots}/{game}")
-    public async getFittingGroups(available_spots: number, game: string): Promise<IGroup[]> {
+    public async getFittingGroups(available_spots: number, game: string): Promise<Group[]> {
         return await this.groupService.getFittingGroups(available_spots, game);
     }
 
@@ -60,7 +59,7 @@ export class GroupController extends Controller {
 
     @Response<ApiError>(404, "Not valid state (user already in group/user not found)")
     @Post("create")
-    public async createGroup(@Body() body: IGroupCreateBody) {
+    public async createGroup(@Body() body: GroupCreateBody) : Promise<PersistedGroup> {
         // Create a group in the database, and create a Discord server for the specific group
         try {
             const group = body;
@@ -101,7 +100,7 @@ export class GroupController extends Controller {
     }
 
     @Post("/join")
-    public async joinGroup(@Body() body: IGroupUser): Promise<any> {
+    public async joinGroup(@Body() body: GroupUser): Promise<any> {
         // Post request group id and username attributes is stored..
         const group_id: string = body.group_id;
         const user_id: string = body.user_id;
@@ -148,7 +147,7 @@ export class GroupController extends Controller {
     // leaveGroup(req, res) | Get's post data from the route, and processes the post request.
     // Out: Response message from the service.
     @Post("leave")
-    public async leaveGroup(@Body() body: IGroupUser): Promise<any> {
+    public async leaveGroup(@Body() body: GroupUser): Promise<any> {
         // Post request group id and username attributes is stored..
         let group_id: string = body.group_id;
         let user_id: string = body.user_id;
@@ -193,7 +192,7 @@ export class GroupController extends Controller {
 
     @Response<ApiError>(404, "Group not found")
     @Get("{group_id}")
-    public async getGroup(group_id: string): Promise<IGroup> {
+    public async getGroup(group_id: string): Promise<PersistedGroup> {
         const res = await this.groupService.getGroup(group_id);
         if (res == null) {
             throw new ApiError({
@@ -207,7 +206,7 @@ export class GroupController extends Controller {
     public async verifyInvite(
         group_id: string,
         invite_id: string
-    ): Promise<IGroup> {
+    ): Promise<Group> {
         // 1) Check if a group exists with id 'group_id'
         var group = await this.groupService.getGroup(group_id);
 
@@ -237,7 +236,7 @@ export class GroupController extends Controller {
         return group;
     }
 
-    private isMergeCompatible(fromGroup: IGroup, toGroup: IGroup): boolean {
+    private isMergeCompatible(fromGroup: Group, toGroup: Group): boolean {
         const newGroupSize = fromGroup.users.length + toGroup.users.length;
         if (toGroup.maxSize < newGroupSize) {
             // logger.info("MS: " + toGroup.maxSize + " - - new GS: " + newGroupSize);
@@ -252,9 +251,9 @@ export class GroupController extends Controller {
     }
 
     @Post("merge")
-    public async mergeTwoGroups(@Body() body: twoGroups): Promise<IGroup> {
-        const fromGroup: IGroup = await this.groupService.getGroup(body.from_id);
-        const toGroup: IGroup = await this.groupService.getGroup(body.to_id);
+    public async mergeTwoGroups(@Body() body: IdPair): Promise<Group> {
+        const fromGroup: PersistedGroup = await this.groupService.getGroup(body.fromId);
+        const toGroup: PersistedGroup = await this.groupService.getGroup(body.toId);
         const mergeCompatabilty = this.isMergeCompatible(fromGroup, toGroup);
         if (mergeCompatabilty) {
 
@@ -275,13 +274,13 @@ export class GroupController extends Controller {
     }
 
     @Post("update")
-    public async updateVisibility(@Body() body: IPersistedGroup): Promise<IPersistedGroup> {
+    public async updateVisibility(@Body() body: PersistedGroup): Promise<PersistedGroup> {
         return await this.groupService.updateVisibility(body);
     }
 
     @Post("remove")
-    public async removeGroup(@Body() body: { group_id: string }): Promise<IGroup> {
-        let result: IGroup;
+    public async removeGroup(@Body() body: { group_id: string }): Promise<Group> {
+        let result: Group;
 
 
         result = await this.groupService.removeGroup(body.group_id);

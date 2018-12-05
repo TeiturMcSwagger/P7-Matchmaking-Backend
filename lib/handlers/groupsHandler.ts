@@ -2,7 +2,7 @@ import * as IO from 'socket.io';
 import logger from '../common/logger';
 import Handler from './handler';
 import { GroupService, TYPES, UserService } from "../services/interfaces";
-import { IMongoGroup, Group, IGroup } from "../models/groupModel";
+import { IMongoGroup, Group, PersistedGroup } from "../models/groupModel";
 import { lazyInject, iocContainer } from '../common/inversify.config';
 import { GroupController } from '../controllers';
 
@@ -15,7 +15,7 @@ export default class GroupsHandler extends Handler {
 
     private count: number = 22;
 
-    public createGroup = async (group: Group): Promise<{ error: boolean, newGroup: Group }> => {
+    public createGroup = async (group: Group): Promise<{ error: boolean, newGroup: PersistedGroup }> => {
         const result = { error: false, newGroup: null }
         try {
             // Invoke mongoGroupsService createGroup
@@ -45,7 +45,7 @@ export default class GroupsHandler extends Handler {
         try {
             const group = await this.controller.joinGroup({ group_id: args.group_id, user_id: args.user_id });
             /* 
-                Test if group is of type IGroup
+                Test if group is of type Group
                 If it is, add the socket to room with id = group._id 
                 and emitGroupChange
             */
@@ -72,7 +72,7 @@ export default class GroupsHandler extends Handler {
         // Disconnect/remove socket from room with group_id
         this.Socket.leave(args.group_id);
 
-        const group: IGroup = await this.controller.getGroup(args.group_id);
+        const group: PersistedGroup = await this.controller.getGroup(args.group_id);
 
         // Is the group now empty?
         // If so, destroy the group and emit that a group has been destroyed
@@ -101,7 +101,7 @@ export default class GroupsHandler extends Handler {
         this.emitter(this.IO.of('/groups'), 'timer', this.count);
     }
 
-    private emitGroupChange = (group: IGroup, caller: string): void => {
+    private emitGroupChange = (group: PersistedGroup, caller: string): void => {
         // Responsible for emitting to entire '/groups' namespace AND room with group_id
         // Namespace '/groups'
         this.emitter(this.IO.of('/groups'), 'groupChanged', { group: group, caller: caller });

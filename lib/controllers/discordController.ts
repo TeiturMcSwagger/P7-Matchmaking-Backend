@@ -2,7 +2,7 @@ import { Client, Guild, Message, GuildMember, CategoryChannel, TextChannel, Voic
 import { inject } from "inversify";
 import { TYPES, UserService, GroupService } from "../services/interfaces";
 import { provideSingleton } from "../common/inversify.config";
-import { IGroup } from "models/groupModel";
+import { Group, PersistedGroup } from "models/groupModel";
 import { IUser } from "models/userModel";
 import { text } from "body-parser";
 
@@ -67,7 +67,7 @@ export class DiscordController {
                 }
 
                 // Get all the groups the user has joined
-                const userGroups : IGroup[] = await this.groupService.getGroupsByUserId(user._id);
+                const userGroups : PersistedGroup[] = await this.groupService.getGroupsByUserId(user._id);
 
                 // Check if the user is in any groups!
                 if(userGroups.length < 1){
@@ -75,7 +75,7 @@ export class DiscordController {
                 }
 
                 // Add user to all the groups that has discord channels!
-                await userGroups.forEach((group : IGroup) => {
+                await userGroups.forEach((group : PersistedGroup) => {
                     // If the group has discord channels
                     if(group.discordChannels.length > 0){
                         this.joinGroup(discordId, group._id);
