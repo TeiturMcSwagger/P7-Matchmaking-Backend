@@ -6,6 +6,10 @@ import { IMongoGroup, Group, PersistedGroup } from "../models/groupModel";
 import { lazyInject, iocContainer } from '../common/inversify.config';
 import { GroupController } from '../controllers';
 
+interface SocketResponse<T> {
+    data: T;
+    error: boolean
+}
 
 export default class GroupsHandler extends Handler {
     @lazyInject(TYPES.GroupService)
@@ -15,20 +19,18 @@ export default class GroupsHandler extends Handler {
 
     private count: number = 22;
 
-    public createGroup = async (group: Group): Promise<{ error: boolean, newGroup: PersistedGroup }> => {
-        const result = { error: false, newGroup: null }
+    public createGroup = async (group: Group): Promise<SocketResponse<PersistedGroup>> => {
+        const result : SocketResponse<PersistedGroup> = { error: false, data: null }
         try {
-            // Invoke mongoGroupsService createGroup
-
-            result.newGroup = await this.controller.createGroup(group);
+            result.data = await this.controller.createGroup(group);
 
             // Add socket to room with group_id
-            this.Socket.join(result.newGroup._id);
+            this.Socket.join(result.data._id);
 
             // emit that a group has changed
             //  To namespace '/groups'
             //  To room with group_id
-            this.emitGroupChange(result.newGroup, 'createGroup');
+            this.emitGroupChange(result.data, 'createGroup');
         }
         catch{
             result.error = true;
@@ -38,49 +40,55 @@ export default class GroupsHandler extends Handler {
         }
     }
 
-    public joinGroup = async (args: { group_id: string, user_id: string }): Promise<IMongoGroup> => {
+    public joinGroup = async (args: { group_id: string, user_id: string }): Promise<SocketResponse<PersistedGroup>> => {
+        const result : SocketResponse<PersistedGroup> = { error: false, data: null }
         logger.info("Join group invoked with the following args: " + JSON.stringify(args));
         // Invoke mongoGroupsService joinGroup
         logger.info("Group_id : " + args.group_id + "  ---   User_id: " + args.user_id);
         try {
-            const group = await this.controller.joinGroup({ group_id: args.group_id, user_id: args.user_id });
-            /* 
-                Test if group is of type Group
-                If it is, add the socket to room with id = group._id 
-                and emitGroupChange
-            */
+            result.data = await this.controller.joinGroup({ group_id: args.group_id, user_id: args.user_id });
 
             // Add socket to room with group_id
-            this.Socket.join(group._id);
+            this.Socket.join(result.data._id);
 
             // emit that a group has changed
             //  To namespace '/groups'
             //  To room with group_id
-            this.emitGroupChange(group, 'joinGroup');
-
-            return group;
+            this.emitGroupChange(result.data, 'joinGroup');
         } catch (error) {
-            return error
+            result.error = true;
+        }
+        finally{
+            return result;
         }
 
     }
 
-    public leaveGroup = async (args: { group_id: string, user_id: string }): Promise<void> => {
+    public leaveGroup = async (args: { group_id: string, user_id: string }): Promise<SocketResponse<void>> => {
+        const result : SocketResponse<void> = { error: false, data: null }
         // Invoke mongoGroupsService leaveGroup
-        await this.controller.leaveGroup({ group_id: args.group_id, user_id: args.user_id });
+        try {
+            const group = await this.controller.leaveGroup({ group_id: args.group_id, user_id: args.user_id });
+            // Disconnect/remove socket from room with group_id
+            this.Socket.leave(args.group_id);
 
-        // Disconnect/remove socket from room with group_id
-        this.Socket.leave(args.group_id);
+            //const group: PersistedGroup = await this.controller.getGroup(args.group_id);
 
-        const group: PersistedGroup = await this.controller.getGroup(args.group_id);
+            // Is the group now empty?
+            // If so, destroy the group and emit that a group has been destroyed
 
-        // Is the group now empty?
-        // If so, destroy the group and emit that a group has been destroyed
-
-        // emit that a group has changed
-        //  To namespace '/groups'
-        //  To room with group_id
-        this.emitGroupChange(group, 'leaveGroup');
+            // emit that a group has changed
+            //  To namespace '/groups'
+            //  To room with group_id
+            this.emitGroupChange(group, 'leaveGroup');
+        } catch (_) {
+            result.error = true;
+        }
+        finally{
+            return result;
+        }
+        
+        
     }
 
     public getGroup = (args: any): void => { }

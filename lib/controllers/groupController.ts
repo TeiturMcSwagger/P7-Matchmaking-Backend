@@ -147,7 +147,7 @@ export class GroupController extends Controller {
     // leaveGroup(req, res) | Get's post data from the route, and processes the post request.
     // Out: Response message from the service.
     @Post("leave")
-    public async leaveGroup(@Body() body: GroupUser): Promise<any> {
+    public async leaveGroup(@Body() body: GroupUser): Promise<PersistedGroup> {
         // Post request group id and username attributes is stored..
         let group_id: string = body.group_id;
         let user_id: string = body.user_id;
@@ -197,8 +197,7 @@ export class GroupController extends Controller {
         if (res == null) {
             throw new ApiError({
                 message: `The group with the groupID: ${group_id} was not found.`, statusCode: 404, name: "Not found"
-            }
-            );
+            });
         }
         return res;
     }

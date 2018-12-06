@@ -16,7 +16,7 @@
         "allowJs": true
     },
     "include": [
-        "lib/**/*.ts"
+        "lib/**/*.ts", "../P7-Matchmaking-Frontend/src/services/WSGroupService.tsx"
     ],
     "exclude": [
         "node_modules"
