@@ -47,8 +47,8 @@ export default class App implements IIOService {
             .setErrorConfig(this.errorConfigFunc)
             .build();
 
-        this.IO = io(this.listen(p));
 
+        this.IO = io(this.listen(p), {path: '/api/socket.io'});
     }
 
     public registerEvents() {

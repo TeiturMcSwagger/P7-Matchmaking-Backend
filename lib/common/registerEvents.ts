@@ -19,7 +19,7 @@ export default function(io : IO.Server){
     // {'/users' : UsersHandler}
 
     // Add event handler for namespace '/groups'
-    io.of('/api/groups').on('connection', (socket : IO.Socket) => {
+    io.of('/groups').on('connection', (socket : IO.Socket) => {
         logger.debug('User connected to the "groups" namespace!');
         registerHandlers(io, socket, GroupsHandler);
     });
