@@ -1,5 +1,6 @@
 import * as mongoose from "mongoose";
 import * as randomstring from "randomstring";
+import { Persisted } from "./interfaces";
 
 const Schema = mongoose.Schema;
 
@@ -37,7 +38,7 @@ export const GroupSchema = new Schema({
     }
 });
 
-interface Persisted {_id: string;}
+
 export interface PersistedGroup extends Group,Persisted {}
 export interface Group {
     discordChannels: string[];

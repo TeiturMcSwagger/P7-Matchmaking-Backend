@@ -1,0 +1,1 @@
+export interface Persisted {_id: string;}

@@ -38,6 +38,10 @@ export interface UserService {
     getUserByDiscordId(discord_id: string): any
 }
 
+export interface QueueService {
+    
+}
+
 export const TYPES = {
     BookService: Symbol.for("BookService"),
     UserService: Symbol.for("UserService"),
