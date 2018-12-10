@@ -48,7 +48,7 @@ export default class App implements IIOService {
             .build();
 
 
-        this.IO = io(this.listen(p), {path: '/api/socket.io'});
+        this.IO = io(this.listen(p), {path: '/api/socket.io', origins: '*:*'});
     }
 
     public registerEvents() {
