@@ -128,7 +128,7 @@ export default class QueueHandler extends Handler {
 
     private IsMatching(firstEntry: PersistedQueueEntry, secondEntry: PersistedQueueEntry){
         const maxSize = 5;
-        const isSingleUser = firstEntry.users.length > 1 || secondEntry.users.length > 1;
+        const isSingleUser = firstEntry.users.length == 1 || secondEntry.users.length == 1;
         const canMakeFullGroup = (firstEntry.users.length + secondEntry.users.length) === maxSize;
 
         if(firstEntry === secondEntry){
