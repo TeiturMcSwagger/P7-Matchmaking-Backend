@@ -3,14 +3,14 @@ import logger from '../common/logger';
 import Handler from './handler';
 import { GroupService, TYPES, UserService } from "../services/interfaces";
 import { IMongoGroup, Group, PersistedGroup } from "../models/groupModel";
-import { lazyInject, iocContainer } from '../common/inversify.config';
+import { lazyInject, iocContainer, provideSingleton } from '../common/inversify.config';
 import { GroupController } from '../controllers';
 
 interface SocketResponse<T> {
     data: T;
     error: boolean
 }
-
+@provideSingleton(GroupsHandler)
 export default class GroupsHandler extends Handler {
     @lazyInject(TYPES.GroupService)
     private groupService: GroupService;

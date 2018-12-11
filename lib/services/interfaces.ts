@@ -1,7 +1,7 @@
 import { Group, IMongoGroup, PersistedGroup } from "models/groupModel";
 import { IUser } from "models/userModel";
 import { Server } from 'socket.io';
-import { QueueEntry } from "models/queueModel"
+import { QueueEntry, PersistedQueueEntry } from "models/queueModel"
 
 
 export interface BookService {
@@ -19,6 +19,7 @@ export interface GroupService {
     updateGroupDiscordChannels(channels: string[], groupId: string): Promise<IMongoGroup>;
     updateGroupUsers(group_id: string, newUsers: string[]): Promise<IMongoGroup>;
     getGroupsByUserId(user_id: String): Promise<IMongoGroup[]>;
+    getGroupByUserId(user_id: string): Promise<PersistedGroup>; 
     removeGroup(group_id: string): Promise<IMongoGroup>;
 }
 
@@ -40,8 +41,11 @@ export interface UserService {
 }
 
 export interface QueueService {
-    createEntry(queueEntry: QueueEntry);
-    getEntries(): Promise<QueueEntry[]>;
+    createEntry(queueEntry: QueueEntry): Promise<PersistedQueueEntry>;
+    removeEntry(queueEntry: QueueEntry): Promise<PersistedQueueEntry>;
+    updateEntry(queueEntry: QueueEntry, id: string): Promise<PersistedQueueEntry>;
+    getHead(): Promise<PersistedQueueEntry>;
+    getEntries(): Promise<PersistedQueueEntry[]>;
 }
 
 export const TYPES = {

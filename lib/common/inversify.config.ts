@@ -10,15 +10,15 @@ import {
   GroupService,
   TYPES,
   UserService,
-  IIOService
+  IIOService,
+  QueueService
 } from "../services/interfaces";
 import {
   MongoUserService,
   MongoGroupService,
-  ExampleService
+  ExampleService,
+  MongoQueueService,
 } from "../services";
-// import '../handlers/handler';
-// import '../handlers/groupsHandler';
 import App from "./app";
 import getDecorators from "inversify-inject-decorators";
 
@@ -35,6 +35,7 @@ const iocContainer = new Container();
 iocContainer.bind<BookService>(TYPES.BookService).to(ExampleService);
 iocContainer.bind<GroupService>(TYPES.GroupService).to(MongoGroupService);
 iocContainer.bind<UserService>(TYPES.UserService).to(MongoUserService);
+iocContainer.bind<QueueService>(TYPES.QueueService).to(MongoQueueService);
 iocContainer.bind<IIOService>(TYPES.IIOService).to(App);
 
 const provide = makeProvideDecorator(iocContainer);

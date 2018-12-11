@@ -1,6 +1,7 @@
 import * as IO from 'socket.io';
 import logger from './logger';
-import '../handlers/groupsHandler'
+import '../handlers/groupsHandler';
+import '../handlers/queueHandler';
 import Handler from '../handlers/handler';
 
 export default function(io : IO.Server, socket : IO.Socket, handlerType : typeof Handler){

@@ -3,6 +3,7 @@ import logger from './logger';
 import registerHandlers from './registerHandlers';
 import EventHandleMap from './eventHandleMap';
 import GroupsHandler from '../handlers/groupsHandler';
+import QueueHandler from '../handlers/queueHandler';
 
 export default function(io : IO.Server){
     // Global connection (Namespace '/')
@@ -22,5 +23,9 @@ export default function(io : IO.Server){
     io.of('/groups').on('connection', (socket : IO.Socket) => {
         logger.debug('User connected to the "groups" namespace!');
         registerHandlers(io, socket, GroupsHandler);
+    });
+    io.of('/queues').on('connection', (socket : IO.Socket) => {
+        logger.debug('User connected to the "queues" namespace!');
+        registerHandlers(io, socket, QueueHandler);
     });
 }

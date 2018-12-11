@@ -13,7 +13,7 @@ import { Group, GroupUser, GroupCreateBody, IGame, IMongoGroup, PersistedGroup, 
 import { get } from "https";
 import { promises } from "fs";
 import { ApiError } from "./ErrorHandler";
-import { response } from "inversify-express-utils";
+import { response, results } from "inversify-express-utils";
 // import { MessageEmbed } from "discord.js";
 import { DiscordController } from "./discordController";
 import { IUser } from "models/userModel";
@@ -190,7 +190,7 @@ export class GroupController extends Controller {
         return result;
     }
 
-    public async changeGroup(user_id: string, group_id: string, old_group_id: string = ""){
+    public async changeGroup(user_id: string, group_id: string, old_group_id: string = ""): Promise<PersistedGroup>{
         // Check if user_id is a user and user has a discordId
         const user = await this.userService.getUserById(user_id);
         if (user == null) {
@@ -211,6 +211,7 @@ export class GroupController extends Controller {
             if(old_group_id !== ""){
                 await this.leaveGroup({group_id: old_group_id, user_id: user_id});
             }
+            return result;
                     
         } catch (error) {
             throw error();        

@@ -51,6 +51,10 @@ export class MongoGroupService implements GroupService {
         return await this.groupsModel.find({ "users": { $in: [user_id] } });
     }
 
+    public async getGroupByUserId(user_id: string): Promise<PersistedGroup> {
+        return await this.groupsModel.findOne({ "users": { $in: [user_id] } });
+    }
+
     public async joinGroup(group_id: string, user_id: string): Promise<IMongoGroup> {
         return await this.groupsModel.findOneAndUpdate({ _id: group_id }, { $push: { users: user_id } }, { new: true });
     }
