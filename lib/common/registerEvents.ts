@@ -10,7 +10,7 @@ export default function(io : IO.Server){
     // Global connection (Namespace '/')
     io.on('connection', (socket: IO.Socket) => {
         logger.debug('a user connected to global namespace');
-        App.SocketIdMap[socket.handshake.query] = socket;
+        App.SocketIdMap[socket.handshake.query.user] = socket;
         // registerHandlers(io, socket);
     });
 
