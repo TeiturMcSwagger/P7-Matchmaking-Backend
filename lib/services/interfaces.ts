@@ -1,6 +1,7 @@
 import { Group, IMongoGroup, PersistedGroup } from "models/groupModel";
 import { IUser } from "models/userModel";
 import { Server } from 'socket.io';
+import { QueueEntry } from "models/queueModel"
 
 
 export interface BookService {
@@ -39,7 +40,8 @@ export interface UserService {
 }
 
 export interface QueueService {
-    
+    createEntry(queueEntry: QueueEntry);
+    getEntries(): Promise<QueueEntry[]>;
 }
 
 export const TYPES = {
@@ -47,4 +49,5 @@ export const TYPES = {
     UserService: Symbol.for("UserService"),
     GroupService: Symbol.for("GroupService"),
     IIOService: Symbol.for("IIOService"),
+    QueueService: Symbol.for("QueueService"),
 };

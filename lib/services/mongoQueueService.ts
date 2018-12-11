@@ -1,6 +1,7 @@
 import * as mongoose from "mongoose";
 import { QueueService } from "./interfaces";
-import { IMongoQueueUser, QueueSchema } from '../models/queueModel'
+import { IMongoQueueUser, QueueSchema, QueueEntry, PersistedQueueEntry } from '../models/queueModel'
+
 
 mongoose.connect(process.env.MONGOURL, { useNewUrlParser: true });
 
@@ -11,12 +12,13 @@ export class MongoQueueService implements QueueService{
         this.queueModel = mongoose.model("csqueue", QueueSchema);
     }
 
-    public queueUser(userId, mode, rank){
-        const dbObject = new this.queueModel;
-        dbObject.userId = userId;
-        dbObject.mode = mode;
-        dbObject.rank = rank;
-
-        return dbObject.save();
+    public async createEntry(queueEntry: QueueEntry): Promise<PersistedQueueEntry>{
+        return await this.queueModel.create(queueEntry);
+        
     }
+
+    public async getEntries(): Promise<PersistedQueueEntry[]>{
+        return await this.queueModel.find().sort( {$natural: 1} );
+    }
+
 }

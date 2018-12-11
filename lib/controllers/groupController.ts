@@ -190,6 +190,33 @@ export class GroupController extends Controller {
         return result;
     }
 
+    public async changeGroup(user_id: string, group_id: string, old_group_id: string = ""){
+        // Check if user_id is a user and user has a discordId
+        const user = await this.userService.getUserById(user_id);
+        if (user == null) {
+            throw new ApiError({
+                message: `The user with the userID: ${user_id} was not found.`, statusCode: 404, name: "UserDoesNotExistOnJoinGroupError"
+            });
+        } else if (user.discordId === undefined || user.discordId === null) {
+            throw new ApiError({
+                message: `The user with the userID: ${user_id} has no discordId.`, statusCode: 404, name: "UserDiscordIdDoesNotExistOnJoinGroupError"
+            });
+        }
+
+
+        // Join the group in mongo
+        try {
+            const result = await this.groupService.joinGroup(group_id, user_id);
+            await this.discordController.joinGroup(user.discordId, group_id);
+            if(old_group_id !== ""){
+                await this.leaveGroup({group_id: old_group_id, user_id: user_id});
+            }
+                    
+        } catch (error) {
+            throw error();        
+        }
+    }
+
     @Response<ApiError>(404, "Group not found")
     @Get("{group_id}")
     public async getGroup(group_id: string): Promise<PersistedGroup> {

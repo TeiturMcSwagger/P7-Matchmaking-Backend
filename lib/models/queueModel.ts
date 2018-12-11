@@ -4,26 +4,31 @@ import { Persisted } from "./interfaces";
 const Schema = mongoose.Schema;
 
 export const QueueSchema = new Schema({
-    userId: {
-        type: String,
-        required: [true, "a name is required"],
-        min: [1, "a name requires minimum 1 letter"] 
+    users: {
+        type: [String],
+        default: []
     },
     mode: {
-        type: String,
+        type: Number,
         required: true
     },
     rank: {
-        type: String
+        type: Number
+    },
+    level: {
+        type: Number,
+        required: true
     }
 });
 
-export interface PersistedQueueUser extends QueueUser,Persisted {}
-
-export interface QueueUser{
-    userId: String,
-    mode: String,
-    rank: String
+export interface PersistedQueueEntry extends QueueEntry,Persisted {}
+export interface QueueEntry{
+    users: string[],
+    gameSettings: {
+        mode: number,
+        rank: number,
+        level: number
+    }
 }
 
-export interface IMongoQueueUser extends QueueUser, mongoose.Document{}
+export interface IMongoQueueUser extends QueueEntry, mongoose.Document{}
