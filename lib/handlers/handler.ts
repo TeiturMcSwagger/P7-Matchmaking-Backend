@@ -1,6 +1,8 @@
 import * as io from 'socket.io';
 import logger from '../common/logger';
+import { provideSingleton } from '../common/inversify.config';
 
+@provideSingleton(Handler)
 export default class Handler{
     protected IO : io.Server;
     protected Socket : io.Socket;

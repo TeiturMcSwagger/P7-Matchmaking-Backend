@@ -9,6 +9,7 @@ import { PersistedQueueEntry, QueueEntry } from 'models/queueModel';
 import { equal } from 'assert';
 import { Game } from 'discord.js';
 import { PersistedGroup } from 'models/groupModel';
+import * as mongoose from 'mongoose';
 
 interface SocketResponse<T> {
     data: T;
@@ -21,8 +22,7 @@ export default class QueueHandler extends Handler {
     private groupService: GroupService
     @lazyInject(GroupController)
     private controller: GroupController
-    @lazyInject(GroupsHandler)
-    private handler: GroupsHandler
+    private handler: GroupsHandler = new GroupsHandler(this.IO, this.Socket);
     @lazyInject(TYPES.QueueService)
     private queueService: QueueService
 
@@ -63,6 +63,10 @@ export default class QueueHandler extends Handler {
 
     private async findMatch(newEntry: PersistedQueueEntry): Promise<boolean>{
         let fifo = await this.queueService.getEntries();
+        console.log(fifo)
+        if(!(fifo.length > 0)){
+            return false;
+        }
 
         const getGroupId = async (qe : PersistedQueueEntry) => {
             if (qe.users.length > 1){
@@ -131,7 +135,13 @@ export default class QueueHandler extends Handler {
         const isSingleUser = firstEntry.users.length === 1 || secondEntry.users.length === 1;
         const canMakeFullGroup = (firstEntry.users.length + secondEntry.users.length) === maxSize;
 
-        if(firstEntry === secondEntry){
+        console.log("asdasdasdasdasdasdasdasd")
+        console.log(firstEntry._id===secondEntry._id)
+        console.log(firstEntry, secondEntry);
+
+
+        if((firstEntry._id as unknown as mongoose.Types.ObjectId).equals(secondEntry._id as unknown as mongoose.Types.ObjectId)){
+            
             return false;
         }
 

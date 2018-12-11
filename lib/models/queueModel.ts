@@ -7,15 +7,9 @@ export const QueueSchema = new Schema({
     users: {
         type: [String],
     },
-    mode: {
-        type: Number,
+    gameSettings: {
+        type: {mode: Number, rank: Number, Level: Number }
     },
-    rank: {
-        type: Number
-    },
-    level: {
-        type: Number,
-    }
 });
 
 export interface PersistedQueueEntry extends QueueEntry,Persisted {}
