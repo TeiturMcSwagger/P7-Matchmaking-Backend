@@ -28,17 +28,23 @@ export default class QueueHandler extends Handler {
 
     public enqueue = async (entry: QueueEntry): Promise<SocketResponse<PersistedQueueEntry>> => {
         const result : SocketResponse<PersistedQueueEntry> = { error: false, data: null }
+        console.log("New request!");
         try {
+            console.log(entry);
             result.data = await this.queueService.createEntry(entry);
         }
-        catch{
+        catch(error){
             result.error = true;
+            console.log("Error: " + error.message);
         }
         finally {
-            let foundMatch = this.findMatch(result.data);
+
+            let foundMatch = await this.findMatch(result.data);
             while(foundMatch){
-                foundMatch = this.findMatch(await this.queueService.getHead());
+                foundMatch = await this.findMatch(await this.queueService.getHead());
             }
+
+            console.log(result);
             return result;
         }
     }

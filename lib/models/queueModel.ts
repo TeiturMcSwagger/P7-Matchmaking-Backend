@@ -6,18 +6,15 @@ const Schema = mongoose.Schema;
 export const QueueSchema = new Schema({
     users: {
         type: [String],
-        default: []
     },
     mode: {
         type: Number,
-        required: true
     },
     rank: {
         type: Number
     },
     level: {
         type: Number,
-        required: true
     }
 });
 
