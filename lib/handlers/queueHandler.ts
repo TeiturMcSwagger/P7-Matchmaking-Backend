@@ -10,7 +10,7 @@ import { equal } from 'assert';
 import { Game } from 'discord.js';
 import { PersistedGroup } from 'models/groupModel';
 import * as mongoose from 'mongoose';
-import App from 'common/app';
+import App from '../common/app';
 
 interface SocketResponse<T> {
     data: T;
