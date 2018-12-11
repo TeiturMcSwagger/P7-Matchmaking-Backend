@@ -125,7 +125,6 @@ export default class QueueHandler extends Handler {
     }
 
     public emitGroupMade = (group: PersistedGroup, caller: string) => {
-        console.log(App.SocketIdMap[group.users[0]].connected);
         group.users.forEach(userId => {
             App.SocketIdMap[userId].emit('joinedGroup', { group: group, caller: caller });    
         });
