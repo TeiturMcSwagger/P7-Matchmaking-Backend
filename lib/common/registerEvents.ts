@@ -10,7 +10,6 @@ export default function(io : IO.Server){
     // Global connection (Namespace '/')
     io.on('connection', (socket: IO.Socket) => {
         logger.debug('a user connected to global namespace');
-        App.SocketIdMap[socket.handshake.query.user] = socket;
         // registerHandlers(io, socket);
     });
 
@@ -28,6 +27,7 @@ export default function(io : IO.Server){
     });
     io.of('/queues').on('connection', (socket : IO.Socket) => {
         logger.debug('User connected to the "queues" namespace!');
+        App.SocketIdMap[socket.handshake.query.id] = socket;
         registerHandlers(io, socket, QueueHandler);
     });
 }
