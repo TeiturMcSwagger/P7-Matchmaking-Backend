@@ -47,7 +47,8 @@ export default class App implements IIOService {
             .setErrorConfig(this.errorConfigFunc)
             .build();
 
-        this.IO = io(this.listen(p));
+
+        this.IO = io(this.listen(p), {path: '/api/socket.io', origins: '*:*'});
     }
 
     public registerEvents() {
@@ -111,6 +112,9 @@ export default class App implements IIOService {
     }
 
     private listen(p: string | number = process.env.PORT): HTTP.Server {
+
+        if(this.IO !== undefined){this.IO.path('/api')}
+
         const welcome = port => () =>
             logger.info(
                 `up and running in ${process.env.NODE_ENV ||
