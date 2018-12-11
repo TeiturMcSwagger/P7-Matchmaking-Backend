@@ -86,16 +86,15 @@ export default class QueueHandler extends Handler {
                 if(fromGroupId === "" && toGroupId === ""){
                     const user1 = entry.users[0];
                     const user2 = newEntry.users[0]
-                    let result = await this.handler.createGroup({
+                    let result = await this.controller.createGroup({
                         users: [user1,user2],
-                        invite_id: "",
-                        visible: false,
+                        
                         game: "Counter-Strike: GO", 
-                        discordChannels: [], 
-                        name:"", 
+                         
+                        name: "MMGROUP", 
                         maxSize: 5
                     })
-                    group = result.data;
+                    group = result;
                     const updatedEntry = entry;
                     updatedEntry.users = [user1,user2];
                     this.queueService.updateEntry(updatedEntry, updatedEntry._id);
@@ -126,6 +125,7 @@ export default class QueueHandler extends Handler {
 
     public emitGroupMade = (group: PersistedGroup, caller: string) => {
         group.users.forEach(userId => {
+            console.log(group)
             this.emitter(this.IO.to(userId), 'joinedGroup', { group: group, caller: caller });    
         });
     }
@@ -135,13 +135,7 @@ export default class QueueHandler extends Handler {
         const isSingleUser = firstEntry.users.length === 1 || secondEntry.users.length === 1;
         const canMakeFullGroup = (firstEntry.users.length + secondEntry.users.length) === maxSize;
 
-        console.log("asdasdasdasdasdasdasdasd")
-        console.log(firstEntry._id===secondEntry._id)
-        console.log(firstEntry, secondEntry);
-
-
         if((firstEntry._id as unknown as mongoose.Types.ObjectId).equals(secondEntry._id as unknown as mongoose.Types.ObjectId)){
-            
             return false;
         }
 
