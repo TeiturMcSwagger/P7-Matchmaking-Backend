@@ -10,6 +10,7 @@ import { equal } from 'assert';
 import { Game } from 'discord.js';
 import { PersistedGroup } from 'models/groupModel';
 import * as mongoose from 'mongoose';
+import App from 'common/app';
 
 interface SocketResponse<T> {
     data: T;
@@ -125,8 +126,7 @@ export default class QueueHandler extends Handler {
 
     public emitGroupMade = (group: PersistedGroup, caller: string) => {
         group.users.forEach(userId => {
-            console.log(group)
-            this.emitter(this.IO.to(userId), 'joinedGroup', { group: group, caller: caller });    
+            App.SocketIdMap[userId].emit('joinedGroup', { group: group, caller: caller });    
         });
     }
 

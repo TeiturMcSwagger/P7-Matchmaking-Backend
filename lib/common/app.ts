@@ -14,20 +14,23 @@ import {
     InversifyExpressServer,
     TYPE
 } from "inversify-express-utils";
-import { iocContainer, provideSingleton } from "./inversify.config";
+import { iocContainer, provideSingleton, lazyInject } from "./inversify.config";
 import * as swaggerUi from "swagger-ui-express";
 import { RegisterRoutes } from "../../build/routes";
 import * as io from 'socket.io';
 import * as HTTP from 'http';
 import registerEvents from "./registerEvents";
-import { IIOService, TYPES } from '../services/interfaces';
+import { IIOService, TYPES, QueueService } from '../services/interfaces';
 import { DiscordController, GroupController } from "../controllers";
 
 @provideSingleton(TYPES.IIOService)
 export default class App implements IIOService {
     public app: express.Application;
     private server: InversifyExpressServer;
+    @lazyInject(TYPES.QueueService)
+    private queueService: QueueService
     public IO: io.Server;
+    public static SocketIdMap : { [key:string]:io.Socket; } = {};
 
     constructor(p: string | number = process.env.PORT) {
         this.app = express();
@@ -48,6 +51,8 @@ export default class App implements IIOService {
             .build();
 
 
+        //Clear all queues.
+        this.queueService.clearQueueEntries();
         this.IO = io(this.listen(p), {path: '/api/socket.io', origins: '*:*'});
     }
 

@@ -4,11 +4,13 @@ import registerHandlers from './registerHandlers';
 import EventHandleMap from './eventHandleMap';
 import GroupsHandler from '../handlers/groupsHandler';
 import QueueHandler from '../handlers/queueHandler';
+import App from './app';
 
 export default function(io : IO.Server){
     // Global connection (Namespace '/')
     io.on('connection', (socket: IO.Socket) => {
         logger.debug('a user connected to global namespace');
+        App.SocketIdMap[socket.handshake.query] = socket;
         // registerHandlers(io, socket);
     });
 
