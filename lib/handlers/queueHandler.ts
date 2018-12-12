@@ -44,12 +44,10 @@ export default class QueueHandler extends Handler {
             while(foundMatch){
                 foundMatch = await this.findMatch(await this.queueService.getHead());
             }
-
-            console.log(result);
             return result;
         }
     }
-    public dequeue = async (entry: QueueEntry): Promise<SocketResponse<PersistedQueueEntry>> => {
+    public dequeue = async (entry: PersistedQueueEntry): Promise<SocketResponse<PersistedQueueEntry>> => {
         const result : SocketResponse<PersistedQueueEntry> = { error: false, data: null }
         try {
             result.data = await this.queueService.removeEntry(entry);
@@ -83,6 +81,7 @@ export default class QueueHandler extends Handler {
                 const fromGroupId = await getGroupId(newEntry); 
                 const toGroupId = await getGroupId(entry)
                 let group: PersistedGroup;
+                let updatedEntry : PersistedQueueEntry = entry;
 
                 if(fromGroupId === "" && toGroupId === ""){
                     const user1 = entry.users[0];
@@ -96,27 +95,30 @@ export default class QueueHandler extends Handler {
                         maxSize: 5
                     })
                     group = result;
-                    const updatedEntry = entry;
                     updatedEntry.users = [user1,user2];
                     this.queueService.updateEntry(updatedEntry, updatedEntry._id);
                 }
                 else if(fromGroupId === "" && toGroupId !== ""){
                     group = await this.controller.changeGroup(newEntry.users[0], toGroupId);
-                    await this.dequeue(entry);
-
+                    updatedEntry.users = entry.users.concat(newEntry.users);
                 }
                 else if(fromGroupId !== "" && toGroupId === ""){
                     group = await this.controller.changeGroup(entry.users[0], fromGroupId);
-                    await this.dequeue(entry);
+                    updatedEntry.users = entry.users.concat(newEntry.users);
                 }
                 else{
                     newEntry.users.forEach(async userId => {
                         group = await this.controller.changeGroup(userId, toGroupId, fromGroupId)
                     });
-                    await this.dequeue(entry);
                     await this.controller.removeGroup({group_id: fromGroupId});
                 }
+                if(group.users.length === 5){
+                    await this.dequeue(entry);
+                } else{
+                    this.queueService.updateEntry(updatedEntry, updatedEntry._id);
+                }
                 await this.dequeue(newEntry);
+                this.handler.emitGroupChange(group, 'joinGroup');
                 this.emitGroupMade(group, "findMatch");
                 return true;
             }

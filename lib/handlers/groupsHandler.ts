@@ -109,7 +109,7 @@ export default class GroupsHandler extends Handler {
         this.emitter(this.IO.of('/groups'), 'timer', this.count);
     }
 
-    private emitGroupChange = (group: PersistedGroup, caller: string): void => {
+    public emitGroupChange = (group: PersistedGroup, caller: string): void => {
         // Responsible for emitting to entire '/groups' namespace AND room with group_id
         // Namespace '/groups'
         this.emitter(this.IO.of('/groups'), 'groupChanged', { group: group, caller: caller });

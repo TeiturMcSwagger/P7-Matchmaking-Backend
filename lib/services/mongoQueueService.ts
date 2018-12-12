@@ -18,7 +18,7 @@ export class MongoQueueService implements QueueService{
         return await this.queueModel.create(queueEntry);  
     }
 
-    public async removeEntry(queueEntry: QueueEntry): Promise<PersistedQueueEntry>{
+    public async removeEntry(queueEntry: PersistedQueueEntry): Promise<PersistedQueueEntry>{
         return await this.queueModel.remove(queueEntry);  
     }
     public async updateEntry(queueEntry: QueueEntry, id: string): Promise<PersistedQueueEntry>{
