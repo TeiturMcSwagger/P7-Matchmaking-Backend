@@ -1,13 +1,9 @@
-import * as IO from 'socket.io';
-import logger from '../common/logger';
 import Handler from './handler';
-import { GroupService, TYPES, UserService, QueueService } from "../services/interfaces";
+import { GroupService, TYPES, QueueService } from "../services/interfaces";
 import { lazyInject } from '../common/inversify.config';
 import { GroupController } from '../controllers';
 import GroupsHandler from './groupsHandler';
 import { PersistedQueueEntry, QueueEntry } from 'models/queueModel';
-import { equal } from 'assert';
-import { Game } from 'discord.js';
 import { PersistedGroup } from 'models/groupModel';
 import * as mongoose from 'mongoose';
 import App from '../common/app';
@@ -33,29 +29,41 @@ export default class QueueHandler extends Handler {
         try {
             console.log(entry);
             result.data = await this.queueService.createEntry(entry);
+            if(result.data.users.length > 0){
+                result.data.users.forEach(userId => {
+                    App.SocketIdMap[userId].emit('groupEnqueued', { group: result.data, caller: "enqueue" });    
+                });
+            }
+            let foundMatch = await this.findMatch(result.data);
+            while(foundMatch){
+                foundMatch = await this.findMatch(await this.queueService.getHead());
+            }
+            
         }
         catch(error){
             result.error = true;
             console.log("Error: " + error.message);
         }
         finally {
-
-            let foundMatch = await this.findMatch(result.data);
-            while(foundMatch){
-                foundMatch = await this.findMatch(await this.queueService.getHead());
-            }
             return result;
         }
     }
+
     public dequeue = async (entry: PersistedQueueEntry): Promise<SocketResponse<PersistedQueueEntry>> => {
         const result : SocketResponse<PersistedQueueEntry> = { error: false, data: null }
         try {
             result.data = await this.queueService.removeEntry(entry);
+            if(result.data.users.length > 0){
+                result.data.users.forEach(userId => {
+                    App.SocketIdMap[userId].emit('groupDequeued', { group: result.data, caller: "dequeue" });    
+                });
+            }
         }
         catch{
             result.error = true;
         }
         finally {
+            
             return result;
         }
     }
@@ -118,7 +126,7 @@ export default class QueueHandler extends Handler {
                     this.queueService.updateEntry(updatedEntry, updatedEntry._id);
                 }
                 await this.dequeue(newEntry);
-                this.handler.emitGroupChange(group, 'joinGroup');
+                this.handler.emitGroupChange(group, 'findMatch');
                 this.emitGroupMade(group, "findMatch");
                 return true;
             }
@@ -131,6 +139,7 @@ export default class QueueHandler extends Handler {
             App.SocketIdMap[userId].emit('joinedGroup', { group: group, caller: caller });    
         });
     }
+
 
     private IsMatching(firstEntry: PersistedQueueEntry, secondEntry: PersistedQueueEntry){
         const maxSize = 5;

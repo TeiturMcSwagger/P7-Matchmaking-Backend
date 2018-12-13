@@ -44,6 +44,7 @@ export interface QueueService {
     createEntry(queueEntry: QueueEntry): Promise<PersistedQueueEntry>;
     removeEntry(queueEntry: PersistedQueueEntry): Promise<PersistedQueueEntry>;
     updateEntry(queueEntry: QueueEntry, id: string): Promise<PersistedQueueEntry>;
+    removeUserFromEntry(userId: string): Promise<PersistedQueueEntry>;
     getHead(): Promise<PersistedQueueEntry>;
     clearQueueEntries(): void;
     getEntries(): Promise<PersistedQueueEntry[]>;

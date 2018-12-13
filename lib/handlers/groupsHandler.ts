@@ -1,7 +1,7 @@
 import * as IO from 'socket.io';
 import logger from '../common/logger';
 import Handler from './handler';
-import { GroupService, TYPES, UserService } from "../services/interfaces";
+import { GroupService, TYPES, UserService, QueueService } from "../services/interfaces";
 import { IMongoGroup, Group, PersistedGroup } from "../models/groupModel";
 import { lazyInject, iocContainer, provideSingleton } from '../common/inversify.config';
 import { GroupController } from '../controllers';
@@ -14,6 +14,9 @@ interface SocketResponse<T> {
 export default class GroupsHandler extends Handler {
     @lazyInject(TYPES.GroupService)
     private groupService: GroupService;
+
+    @lazyInject(TYPES.QueueService)
+    private queueService: QueueService;
     @lazyInject(GroupController)
     private controller: GroupController
 
@@ -51,6 +54,7 @@ export default class GroupsHandler extends Handler {
             // Add socket to room with group_id
             this.Socket.join(result.data._id);
 
+
             // emit that a group has changed
             //  To namespace '/groups'
             //  To room with group_id
@@ -71,8 +75,11 @@ export default class GroupsHandler extends Handler {
             const group = await this.controller.leaveGroup({ group_id: args.group_id, user_id: args.user_id });
             // Disconnect/remove socket from room with group_id
             this.Socket.leave(args.group_id);
+            this.queueService.removeUserFromEntry(args.user_id);
 
             //const group: PersistedGroup = await this.controller.getGroup(args.group_id);
+
+
 
             // Is the group now empty?
             // If so, destroy the group and emit that a group has been destroyed

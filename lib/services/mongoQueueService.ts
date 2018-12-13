@@ -2,6 +2,7 @@ import * as mongoose from "mongoose";
 import { QueueService } from "./interfaces";
 import { IMongoQueueUser, QueueSchema, QueueEntry, PersistedQueueEntry } from '../models/queueModel'
 import { injectable } from "inversify";
+import { PersistedGroup } from "models/groupModel";
 
 
 mongoose.connect(process.env.MONGOURL, { useNewUrlParser: true });
@@ -24,6 +25,20 @@ export class MongoQueueService implements QueueService{
     public async updateEntry(queueEntry: QueueEntry, id: string): Promise<PersistedQueueEntry>{
         return await this.queueModel.update({_id: id}, queueEntry);
     }
+
+    public async entryExists(group: PersistedGroup): Promise<boolean>{
+        this.queueModel.findOne({ "users": group.users});
+        return false;
+    }
+
+    public async removeUserFromEntry(userId: string): Promise<PersistedQueueEntry>{
+        let res = await this.queueModel.findOneAndUpdate({ "users": { $in: [userId] } }, { $pull: { users: userId } });
+        if(res !== null && res.users.length === 0){
+            this.removeEntry(res);
+        }
+        return res;
+    }
+
     public clearQueueEntries(): void {
         this.queueModel.remove({});
     }
