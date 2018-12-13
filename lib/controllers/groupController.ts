@@ -8,7 +8,7 @@ import {
     Response
 } from "tsoa";
 import { provideSingleton, inject, provide } from "../common/inversify.config";
-import { GroupService, TYPES, UserService } from "../services/interfaces";
+import { GroupService, TYPES, UserService, QueueService } from "../services/interfaces";
 import { Group, GroupUser, GroupCreateBody, IGame, IMongoGroup, PersistedGroup, IdPair } from "../models/groupModel";
 import { get } from "https";
 import { promises } from "fs";
@@ -28,6 +28,7 @@ import logger from "../common/logger";
 export class GroupController extends Controller {
     constructor(
         @inject(TYPES.GroupService) private groupService: GroupService,
+        @inject(TYPES.QueueService) private queueService: QueueService,
         @inject(TYPES.UserService) private userService: UserService,
         private discordController: DiscordController,
     ) {
@@ -129,6 +130,7 @@ export class GroupController extends Controller {
                     message: `The user with the userID: ${user_id} has no discordId.`, statusCode: 404, name: "UserDiscordIdDoesNotExistOnJoinGroupError"
                 });
             }
+
 
 
             // Join the group in mongo
