@@ -35,7 +35,11 @@ export default class QueueHandler extends Handler {
             console.log("Error: " + error.message);
         }
         finally {
-
+            if(result.data.users.length > 0){
+                result.data.users.forEach(userId => {
+                    App.SocketIdMap[userId].emit('groupEnqueued', { group: result.data, caller: "enqueue" });    
+                });
+            }
             let foundMatch = await this.findMatch(result.data);
             while(foundMatch){
                 foundMatch = await this.findMatch(await this.queueService.getHead());
@@ -43,6 +47,7 @@ export default class QueueHandler extends Handler {
             return result;
         }
     }
+
     public dequeue = async (entry: PersistedQueueEntry): Promise<SocketResponse<PersistedQueueEntry>> => {
         const result : SocketResponse<PersistedQueueEntry> = { error: false, data: null }
         try {
@@ -52,6 +57,11 @@ export default class QueueHandler extends Handler {
             result.error = true;
         }
         finally {
+            if(result.data.users.length > 0){
+                result.data.users.forEach(userId => {
+                    App.SocketIdMap[userId].emit('groupDequeued', { group: result.data, caller: "dequeue" });    
+                });
+            }
             return result;
         }
     }
@@ -114,7 +124,7 @@ export default class QueueHandler extends Handler {
                     this.queueService.updateEntry(updatedEntry, updatedEntry._id);
                 }
                 await this.dequeue(newEntry);
-                this.handler.emitGroupChange(group, 'joinGroup');
+                this.handler.emitGroupChange(group, 'findMatch');
                 this.emitGroupMade(group, "findMatch");
                 return true;
             }
@@ -127,6 +137,7 @@ export default class QueueHandler extends Handler {
             App.SocketIdMap[userId].emit('joinedGroup', { group: group, caller: caller });    
         });
     }
+
 
     private IsMatching(firstEntry: PersistedQueueEntry, secondEntry: PersistedQueueEntry){
         const maxSize = 5;
