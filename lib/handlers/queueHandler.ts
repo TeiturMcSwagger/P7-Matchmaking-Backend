@@ -29,12 +29,6 @@ export default class QueueHandler extends Handler {
         try {
             console.log(entry);
             result.data = await this.queueService.createEntry(entry);
-        }
-        catch(error){
-            result.error = true;
-            console.log("Error: " + error.message);
-        }
-        finally {
             if(result.data.users.length > 0){
                 result.data.users.forEach(userId => {
                     App.SocketIdMap[userId].emit('groupEnqueued', { group: result.data, caller: "enqueue" });    
@@ -44,6 +38,13 @@ export default class QueueHandler extends Handler {
             while(foundMatch){
                 foundMatch = await this.findMatch(await this.queueService.getHead());
             }
+            
+        }
+        catch(error){
+            result.error = true;
+            console.log("Error: " + error.message);
+        }
+        finally {
             return result;
         }
     }
@@ -52,16 +53,17 @@ export default class QueueHandler extends Handler {
         const result : SocketResponse<PersistedQueueEntry> = { error: false, data: null }
         try {
             result.data = await this.queueService.removeEntry(entry);
-        }
-        catch{
-            result.error = true;
-        }
-        finally {
             if(result.data.users.length > 0){
                 result.data.users.forEach(userId => {
                     App.SocketIdMap[userId].emit('groupDequeued', { group: result.data, caller: "dequeue" });    
                 });
             }
+        }
+        catch{
+            result.error = true;
+        }
+        finally {
+            
             return result;
         }
     }
