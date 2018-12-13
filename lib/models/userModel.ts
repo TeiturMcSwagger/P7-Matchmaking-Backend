@@ -2,11 +2,11 @@ import * as mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
-export const UserSchema : mongoose.Schema = new Schema({
+export const UserSchema: mongoose.Schema = new Schema({
     name: {
         type: String,
         required: [true, "a name is required"],
-        min: [1, "a name requires minimum 1 letter"] 
+        min: [1, "a name requires minimum 1 letter"]
     },
     discordId: {
         type: String,
@@ -16,7 +16,8 @@ export const UserSchema : mongoose.Schema = new Schema({
     created: String
 });
 
-export interface IMongoUser extends IUser, mongoose.Document{_id: string}
+export interface IMongoUser extends IUser, mongoose.Document { _id: string }
+
 export interface IUser {
     _id: string,
     name: string,
@@ -25,6 +26,6 @@ export interface IUser {
 }
 
 export interface IUserCreate {
-    name : string,
+    name: string,
     discordId: string
 }

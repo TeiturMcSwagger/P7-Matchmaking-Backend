@@ -12,14 +12,14 @@ export interface GroupService {
     getGroups(): Promise<Group[]>;
     getFittingGroups(size: number, game: string): Promise<Group[]>;
     createGroup(group: any): Promise<IMongoGroup>;
-    getGroup(group_id: String): Promise<IMongoGroup>;
-    leaveGroup(group_id: String, user_id: String): Promise<IMongoGroup>;
-    joinGroup(group_id: String, user_id: String): Promise<IMongoGroup>;
+    getGroup(group_id: String): Promise<PersistedGroup>;
+    leaveGroup(group_id: String, user_id: String): Promise<PersistedGroup>;
+    joinGroup(group_id: String, user_id: String): Promise<PersistedGroup>;
     updateVisibility(group: PersistedGroup): Promise<IMongoGroup>;
     updateGroupDiscordChannels(channels: string[], groupId: string): Promise<IMongoGroup>;
     updateGroupUsers(group_id: string, newUsers: string[]): Promise<IMongoGroup>;
     getGroupsByUserId(user_id: String): Promise<IMongoGroup[]>;
-    getGroupByUserId(user_id: string): Promise<PersistedGroup>; 
+    getGroupByUserId(user_id: string): Promise<PersistedGroup>;
     removeGroup(group_id: string): Promise<IMongoGroup>;
 }
 

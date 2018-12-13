@@ -34,7 +34,7 @@ export class GroupController extends Controller {
         super();
     }
 
-    
+
     @Get()
     public async getGroups(): Promise<Group[]> {
         return await this.groupService.getGroups();
@@ -50,16 +50,17 @@ export class GroupController extends Controller {
         return await gameData;
     }
 
-    private async ifExistingGroupsThenThrow(user_id: string){
-      const existingGroups = await this.groupService.getGroupsByUserId(user_id);
-      if(existingGroups.length != 0) throw new ApiError({ 
-        message : `The user with the userID: ${user_id} is already in a group.`, statusCode : 404, name: "UserAlreadyInAGroupOnJoinGroupError"}
-      );
+    private async ifExistingGroupsThenThrow(user_id: string) {
+        const existingGroups = await this.groupService.getGroupsByUserId(user_id);
+        if (existingGroups.length != 0) throw new ApiError({
+            message: `The user with the userID: ${user_id} is already in a group.`, statusCode: 404, name: "UserAlreadyInAGroupOnJoinGroupError"
+        }
+        );
     }
 
     @Response<ApiError>(404, "Not valid state (user already in group/user not found)")
     @Post("create")
-    public async createGroup(@Body() body: GroupCreateBody) : Promise<PersistedGroup> {
+    public async createGroup(@Body() body: GroupCreateBody): Promise<PersistedGroup> {
         // Create a group in the database, and create a Discord server for the specific group
         try {
             const group = body;
@@ -107,7 +108,7 @@ export class GroupController extends Controller {
 
         await this.ifExistingGroupsThenThrow(user_id)
         // Get response from service
-        let result: IMongoGroup;
+        let result: PersistedGroup;
         try {
             // Check if user is in group
             const group = await this.groupService.getGroup(group_id);
@@ -190,7 +191,7 @@ export class GroupController extends Controller {
         return result;
     }
 
-    public async changeGroup(user_id: string, group_id: string, old_group_id: string = ""): Promise<PersistedGroup>{
+    public async changeGroup(user_id: string, group_id: string, old_group_id: string = ""): Promise<PersistedGroup> {
         // Check if user_id is a user and user has a discordId
         const user = await this.userService.getUserById(user_id);
         if (user == null) {
@@ -208,13 +209,13 @@ export class GroupController extends Controller {
         try {
             const result = await this.groupService.joinGroup(group_id, user_id);
             await this.discordController.joinGroup(user.discordId, group_id);
-            if(old_group_id !== ""){
-                await this.leaveGroup({group_id: old_group_id, user_id: user_id});
+            if (old_group_id !== "") {
+                await this.leaveGroup({ group_id: old_group_id, user_id: user_id });
             }
             return result;
-                    
+
         } catch (error) {
-            throw error();        
+            throw error();
         }
     }
 
@@ -222,6 +223,7 @@ export class GroupController extends Controller {
     @Get("{group_id}")
     public async getGroup(group_id: string): Promise<PersistedGroup> {
         const res = await this.groupService.getGroup(group_id);
+        logger.info(JSON.stringify(res))
         if (res == null) {
             throw new ApiError({
                 message: `The group with the groupID: ${group_id} was not found.`, statusCode: 404, name: "Not found"

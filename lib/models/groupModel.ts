@@ -1,6 +1,7 @@
 import * as mongoose from "mongoose";
 import * as randomstring from "randomstring";
 import { Persisted } from "./interfaces";
+import { IUser } from "./userModel";
 
 const Schema = mongoose.Schema;
 
@@ -35,11 +36,15 @@ export const GroupSchema = new Schema({
     discordChannels: {
         type: [String],
         default: []
+    },
+    userList: {
+        type: [],
+        default: []
     }
 });
 
 
-export interface PersistedGroup extends Group,Persisted {}
+export interface PersistedGroup extends Group, Persisted, IUserList { }
 export interface Group {
     discordChannels: string[];
     name: string;
@@ -50,7 +55,11 @@ export interface Group {
     visible: boolean;
 };
 
-export interface IMongoGroup extends Group, mongoose.Document{}
+export interface IUserList {
+    userList: IUser[];
+}
+
+export interface IMongoGroup extends Group, mongoose.Document, IUserList { }
 
 export interface GroupCreateBody {
     name: string,
@@ -70,6 +79,6 @@ export interface IGame {
 }
 
 export interface IdPair {
-    fromId : string;
-    toId : string;
+    fromId: string;
+    toId: string;
 }

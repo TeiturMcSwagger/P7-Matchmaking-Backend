@@ -1,18 +1,23 @@
 import * as mongoose from "mongoose";
-import { GroupSchema, IMongoGroup, Group, PersistedGroup } from "../models/groupModel";
+import { GroupSchema, IMongoGroup, Group, PersistedGroup, IUserList } from "../models/groupModel";
 import { GroupService } from "./interfaces"
 import { injectable } from "inversify";
 import * as randomstring from "randomstring";
 import logger from "../common/logger";
+import { MongoUserService } from "../services/mongoUserService";
+import { IUser } from "../models/userModel";
 
 mongoose.connect(process.env.MONGOURL, { useNewUrlParser: true });
 
 @injectable()
 export class MongoGroupService implements GroupService {
     private groupsModel: mongoose.Model<IMongoGroup>;
+    private userService: MongoUserService;
 
     constructor() {
         this.groupsModel = mongoose.model("groups", GroupSchema);
+
+        this.userService = new MongoUserService();
     }
 
     public async updateGroupUsers(group_id: string, newUsers: string[]) {
@@ -22,7 +27,13 @@ export class MongoGroupService implements GroupService {
     }
 
     public async getGroups(): Promise<Group[]> {
-        return await this.groupsModel.find();
+        const allGroups = await this.groupsModel.find();
+        const result: Group[] = []
+        for (const group of allGroups) {
+            result.push(await this.populateUserList(group));
+        }
+        logger.error(JSON.stringify(result))
+        return result;
     }
 
     public async updateGroupDiscordChannels(channels: string[], groupId: string): Promise<IMongoGroup> {
@@ -41,10 +52,17 @@ export class MongoGroupService implements GroupService {
         return this.groupsModel.create(group);
     }
 
-    public async getGroup(group_id: String): Promise<IMongoGroup> {
+    public async getGroup(group_id: String): Promise<PersistedGroup> {
         logger.info("Requested group: " + group_id);
-        const group = await this.groupsModel.findById(group_id);
-        return group;
+        return await this.populateUserList(await this.groupsModel.findById(group_id));
+    }
+
+    private async populateUserList(group: PersistedGroup): Promise<PersistedGroup> {
+        for (const userID of group.users) {
+            const userobj = await this.userService.getUserById(userID)
+            group.userList.push(userobj)
+        }
+        return group
     }
 
     public async getGroupsByUserId(user_id: string): Promise<IMongoGroup[]> {
@@ -55,15 +73,27 @@ export class MongoGroupService implements GroupService {
         return await this.groupsModel.findOne({ "users": { $in: [user_id] } });
     }
 
-    public async joinGroup(group_id: string, user_id: string): Promise<IMongoGroup> {
-        return await this.groupsModel.findOneAndUpdate({ _id: group_id }, { $push: { users: user_id } }, { new: true });
+    public async joinGroup(group_id: string, user_id: string): Promise<PersistedGroup> {
+        return await this.populateUserList(
+            await this.groupsModel.findOneAndUpdate(
+                { _id: group_id },
+                { $push: { users: user_id } },
+                { new: true }
+            )
+        );
     }
 
     // leaveGroup(group_id) | Checks whether the group id exist in the database
     // Out: A message, containing either a success- or reject message
-    public async leaveGroup(group_id: string, user_id: string): Promise<IMongoGroup> {
+    public async leaveGroup(group_id: string, user_id: string): Promise<PersistedGroup> {
         // This finds the group, where both the group_id and user_id matches, and $pulls out the entry from the users array. 
-        return await this.groupsModel.findOneAndUpdate({ _id: group_id }, { $pull: { users: { $in: [user_id] } } }, { new: true });
+        return await this.populateUserList(
+            await this.groupsModel.findOneAndUpdate(
+                { _id: group_id },
+                { $pull: { users: { $in: [user_id] } } },
+                { new: true }
+            )
+        );
     }
 
     public async updateVisibility(group: PersistedGroup): Promise<IMongoGroup> {
