@@ -1,13 +1,9 @@
-import * as IO from 'socket.io';
-import logger from '../common/logger';
 import Handler from './handler';
-import { GroupService, TYPES, UserService, QueueService } from "../services/interfaces";
+import { GroupService, TYPES, QueueService } from "../services/interfaces";
 import { lazyInject } from '../common/inversify.config';
 import { GroupController } from '../controllers';
 import GroupsHandler from './groupsHandler';
 import { PersistedQueueEntry, QueueEntry } from 'models/queueModel';
-import { equal } from 'assert';
-import { Game } from 'discord.js';
 import { PersistedGroup } from 'models/groupModel';
 import * as mongoose from 'mongoose';
 import App from '../common/app';
