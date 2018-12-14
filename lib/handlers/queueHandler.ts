@@ -135,10 +135,7 @@ export default class QueueHandler extends Handler {
 
     public emitGroupMade = async (group: PersistedGroup, caller: string) => {
         const newGroup = await this.groupService.getGroup(group._id);
-        console.log(newGroup)
-        console.log(group)
         for (const userId of group.users) {
-            
             await App.SocketIdMap[userId].emit('joinedGroup', { group: newGroup, caller: caller });
         }
     }
