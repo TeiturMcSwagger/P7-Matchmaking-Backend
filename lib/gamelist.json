@@ -2,21 +2,22 @@
     {
         "name": "Counter-Strike: GO",
         "maxSize": 5
-    },
-    {
-        "name": "Rocket League 3v3",
-        "maxSize": 3
-    },
-    {
-        "name": "Tekken 1v1",
-        "maxSize": 2
-    },
-    {
-        "name": "League of Legends",
-        "maxSize": 5
-    },
-    {
-        "name": "Overwatch",
-        "maxSize": 6
     }
+    // ,
+    // {
+    //     "name": "Rocket League 3v3",
+    //     "maxSize": 3
+    // },
+    // {
+    //     "name": "Tekken 1v1",
+    //     "maxSize": 2
+    // },
+    // {
+    //     "name": "League of Legends",
+    //     "maxSize": 5
+    // },
+    // {
+    //     "name": "Overwatch",
+    //     "maxSize": 6
+    // }
 ]
