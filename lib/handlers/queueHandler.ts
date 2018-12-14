@@ -25,9 +25,7 @@ export default class QueueHandler extends Handler {
 
     public enqueue = async (entry: QueueEntry): Promise<SocketResponse<PersistedQueueEntry>> => {
         const result : SocketResponse<PersistedQueueEntry> = { error: false, data: null }
-        console.log("New request!");
         try {
-            console.log(entry);
             result.data = await this.queueService.createEntry(entry);
             if(result.data.users.length > 0){
                 result.data.users.forEach(userId => {
@@ -53,8 +51,8 @@ export default class QueueHandler extends Handler {
         const result : SocketResponse<PersistedQueueEntry> = { error: false, data: null }
         try {
             result.data = await this.queueService.removeEntry(entry);
-            if(result.data.users.length > 0){
-                result.data.users.forEach(userId => {
+            if(entry.users.length > 0){
+                entry.users.forEach(userId => {
                     App.SocketIdMap[userId].emit('groupDequeued', { group: result.data, caller: "dequeue" });    
                 });
             }
@@ -70,7 +68,6 @@ export default class QueueHandler extends Handler {
 
     private async findMatch(newEntry: PersistedQueueEntry): Promise<boolean>{
         let fifo = await this.queueService.getEntries();
-        console.log(fifo)
         if(!(fifo.length > 0)){
             return false;
         }
