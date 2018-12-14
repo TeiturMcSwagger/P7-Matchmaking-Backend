@@ -39,6 +39,7 @@ export default class QueueHandler extends Handler {
 
         }
         catch (error) {
+            console.error(error);
             result.error = true;
             console.log("Error: " + error.message);
         }
@@ -132,10 +133,10 @@ export default class QueueHandler extends Handler {
         return false;
     }
 
-    public emitGroupMade = (group: PersistedGroup, caller: string) => {
-        group.users.forEach(userId => {
-            App.SocketIdMap[userId].emit('joinedGroup', { group: group, caller: caller });
-        });
+    public emitGroupMade = async (group: PersistedGroup, caller: string) => {
+        for (const userId of group.users) {
+            await App.SocketIdMap[userId].emit('joinedGroup', { group: group, caller: caller });
+        }
     }
 
 
