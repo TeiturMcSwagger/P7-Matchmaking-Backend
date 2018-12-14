@@ -27,7 +27,7 @@ export default class QueueHandler extends Handler {
         const result : SocketResponse<PersistedQueueEntry> = { error: false, data: null }
         try {
             result.data = await this.queueService.createEntry(entry);
-            if(result.data.users.length > 0){
+            if(result.data.users.length > 1){
                 result.data.users.forEach(userId => {
                     App.SocketIdMap[userId].emit('groupEnqueued', { group: result.data, caller: "enqueue" });    
                 });
@@ -51,7 +51,7 @@ export default class QueueHandler extends Handler {
         const result : SocketResponse<PersistedQueueEntry> = { error: false, data: null }
         try {
             result.data = await this.queueService.removeEntry(entry);
-            if(entry.users.length > 0){
+            if(entry.users.length > 1){
                 entry.users.forEach(userId => {
                     App.SocketIdMap[userId].emit('groupDequeued', { group: result.data, caller: "dequeue" });    
                 });
