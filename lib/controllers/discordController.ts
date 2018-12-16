@@ -1,10 +1,12 @@
 import { Client, Guild, Message, GuildMember, CategoryChannel, TextChannel, VoiceChannel, Role, Channel, GuildChannel } from "discord.js";
 import { inject } from "inversify";
 import { TYPES, UserService, GroupService } from "../services/interfaces";
-import { provideSingleton } from "../common/inversify.config";
 import { Group, PersistedGroup } from "models/groupModel";
 import { IUser } from "models/userModel";
 import { text } from "body-parser";
+import { provide } from "inversify-binding-decorators";
+import { provideSingleton } from "../common/inversify.config";
+
 
 @provideSingleton(DiscordController)
 export class DiscordController {

@@ -1,8 +1,9 @@
 import { Container, inject, injectable, decorate, interfaces } from "inversify";
 import {
   autoProvide,
-  makeProvideDecorator,
-  makeFluentProvideDecorator
+  buildProviderModule,
+  fluentProvide,
+  provide,
 } from "inversify-binding-decorators";
 import { Controller } from "tsoa";
 import {
@@ -19,6 +20,10 @@ import {
   ExampleService,
   MongoQueueService,
 } from "../services";
+import { QueueBusinessLogic, BUSINESSTYPES, GroupBusinessLogic } from "../controllers/interfaces";
+
+import { QueueController, GroupController, DiscordController} from "../controllers";
+
 import App from "./app";
 import getDecorators from "inversify-inject-decorators";
 
@@ -32,20 +37,26 @@ type Identifier =
 
 const iocContainer = new Container();
 
+let provideSingleton = function(
+  identifier: string | symbol | interfaces.Newable<any> | interfaces.Abstract<any>
+) {
+    return fluentProvide(identifier)
+      .inSingletonScope()
+      .done();
+};
+
+iocContainer.bind<IIOService>(TYPES.IIOService).to(App);
 iocContainer.bind<BookService>(TYPES.BookService).to(ExampleService);
 iocContainer.bind<GroupService>(TYPES.GroupService).to(MongoGroupService);
 iocContainer.bind<UserService>(TYPES.UserService).to(MongoUserService);
 iocContainer.bind<QueueService>(TYPES.QueueService).to(MongoQueueService);
-iocContainer.bind<IIOService>(TYPES.IIOService).to(App);
 
-const provide = makeProvideDecorator(iocContainer);
-const fluentProvider = makeFluentProvideDecorator(iocContainer);
-
-const provideNamed = (identifier: Identifier, name: string) => fluentProvider(identifier).whenTargetNamed(name).done();
-
-const provideSingleton = (identifier: Identifier) => fluentProvider(identifier).inSingletonScope().done(true);
 
 const { lazyInject } = getDecorators(iocContainer);
 
-export { iocContainer, autoProvide, provide, provideSingleton, provideNamed, inject, decorate, injectable, lazyInject };
+
+
+iocContainer.load(buildProviderModule());
+
+export { iocContainer, provideSingleton, autoProvide, inject, decorate, injectable, lazyInject };
 

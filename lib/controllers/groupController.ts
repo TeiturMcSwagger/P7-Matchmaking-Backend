@@ -1,3 +1,4 @@
+import '../common/inversify.config'
 import {
     Route,
     Controller,
@@ -7,7 +8,7 @@ import {
     Post,
     Response
 } from "tsoa";
-import { provideSingleton, inject, provide } from "../common/inversify.config";
+import { inject, provideSingleton } from "../common/inversify.config";
 import { GroupService, TYPES, UserService, QueueService } from "../services/interfaces";
 import { Group, GroupUser, GroupCreateBody, IGame, IMongoGroup, PersistedGroup, IdPair } from "../models/groupModel";
 import { get } from "https";
@@ -21,14 +22,15 @@ import { IUser } from "models/userModel";
 const gameData = require("../gamelist.json");
 
 import logger from "../common/logger";
+import { GroupBusinessLogic } from "./interfaces";
+import { provide } from 'inversify-binding-decorators';
 
 @Tags("groups")
 @Route("api/groups")
-@provideSingleton(GroupController)
-export class GroupController extends Controller {
+@provide(GroupController)
+export class GroupController extends Controller implements GroupBusinessLogic {
     constructor(
         @inject(TYPES.GroupService) private groupService: GroupService,
-        @inject(TYPES.QueueService) private queueService: QueueService,
         @inject(TYPES.UserService) private userService: UserService,
         private discordController: DiscordController,
     ) {

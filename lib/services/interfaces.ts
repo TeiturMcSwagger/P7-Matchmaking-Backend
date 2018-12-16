@@ -56,4 +56,6 @@ export const TYPES = {
     GroupService: Symbol.for("GroupService"),
     IIOService: Symbol.for("IIOService"),
     QueueService: Symbol.for("QueueService"),
+    QueueBusinessLogic: Symbol.for("QueueBusinessLogic"),
+    GroupBusinessLogic: Symbol.for("GroupBusinessLogic"),
 };

@@ -1,26 +1,31 @@
 import * as mongoose from "mongoose";
 import { GroupSchema, IMongoGroup, Group, PersistedGroup, IUserList } from "../models/groupModel";
 import { GroupService } from "./interfaces"
-import { injectable } from "inversify";
+import { injectable, inject } from "inversify";
 import * as randomstring from "randomstring";
 import logger from "../common/logger";
 import { MongoUserService } from "../services/mongoUserService";
 import { IUser } from "../models/userModel";
+import { lazyInject } from "../common/inversify.config";
+import { BUSINESSTYPES, QueueBusinessLogic } from "../controllers/interfaces";
 
-mongoose.connect(process.env.MONGOURL, { useNewUrlParser: true });
+
 
 @injectable()
 export class MongoGroupService implements GroupService {
     private groupsModel: mongoose.Model<IMongoGroup>;
     private userService: MongoUserService;
+    
 
     constructor() {
+        mongoose.connect(process.env.MONGOURL, { useNewUrlParser: true });
         this.groupsModel = mongoose.model("groups", GroupSchema);
 
         this.userService = new MongoUserService();
     }
 
     public async updateGroupUsers(group_id: string, newUsers: string[]) {
+        
         let res;
         newUsers.forEach(u => res = this.groupsModel.findOneAndUpdate({ _id: group_id }, { $push: { users: u } }, { new: true }));
         return res;

@@ -4,16 +4,17 @@ import { UserSchema, IUser, IMongoUser } from "../models/userModel";
 import { injectable } from "inversify";
 import { UserService } from "./interfaces";
 
-mongoose.connect(
-  process.env.MONGOURL,
-  { useNewUrlParser: true }
-);
+
 
 @injectable()
 export class MongoUserService implements UserService {
     private userModel : mongoose.Model<IMongoUser>;
 
     constructor(){
+        mongoose.connect(
+            process.env.MONGOURL,
+            { useNewUrlParser: true }
+          );
         this.userModel = mongoose.model<IMongoUser>("users", UserSchema);
     }
 

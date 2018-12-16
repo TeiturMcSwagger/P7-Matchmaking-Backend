@@ -12,11 +12,13 @@ import {
   Tags,
 } from "tsoa";
 import { ApiError } from "./ErrorHandler";
-import { provideSingleton, inject, provide } from "../common/inversify.config";
+import { inject, provideSingleton } from "../common/inversify.config";
 
 import { IUser, IUserCreate } from "../models/userModel";
 
 import { TYPES, UserService } from "../services/interfaces";
+import { provide } from "inversify-binding-decorators";
+
 
 @Tags("users")
 @Route("/api/users")

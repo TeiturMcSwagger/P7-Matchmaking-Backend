@@ -1,10 +1,12 @@
-import * as IO from 'socket.io';
+import '../common/inversify.config'
 import logger from '../common/logger';
 import Handler from './handler';
 import { GroupService, TYPES, UserService, QueueService } from "../services/interfaces";
 import { IMongoGroup, Group, PersistedGroup } from "../models/groupModel";
-import { lazyInject, iocContainer, provideSingleton } from '../common/inversify.config';
+import { lazyInject, iocContainer, inject, provideSingleton } from '../common/inversify.config';
 import { GroupController } from '../controllers';
+import { BUSINESSTYPES, GroupBusinessLogic } from '../controllers/interfaces';
+import { provide } from 'inversify-binding-decorators';
 
 interface SocketResponse<T> {
     data: T;
@@ -12,20 +14,19 @@ interface SocketResponse<T> {
 }
 @provideSingleton(GroupsHandler)
 export default class GroupsHandler extends Handler {
-    @lazyInject(TYPES.GroupService)
-    private groupService: GroupService;
 
+    @lazyInject(GroupController)
+    private groupLogic: GroupController
     @lazyInject(TYPES.QueueService)
     private queueService: QueueService;
-    @lazyInject(GroupController)
-    private controller: GroupController
 
-    private count: number = 22;
+
+    private count: number = 22; 
 
     public createGroup = async (group: Group): Promise<SocketResponse<PersistedGroup>> => {
         const result : SocketResponse<PersistedGroup> = { error: false, data: null }
         try {
-            result.data = await this.controller.createGroup(group);
+            result.data = await this.groupLogic.createGroup(group);
 
             // Add socket to room with group_id
             this.Socket.join(result.data._id);
@@ -35,7 +36,8 @@ export default class GroupsHandler extends Handler {
             //  To room with group_id
             this.emitGroupChange(result.data, 'createGroup');
         }
-        catch{
+        catch(error){
+            console.log(error)
             result.error = true;
         }
         finally {
@@ -49,7 +51,7 @@ export default class GroupsHandler extends Handler {
         // Invoke mongoGroupsService joinGroup
         logger.info("Group_id : " + args.group_id + "  ---   User_id: " + args.user_id);
         try {
-            result.data = await this.controller.joinGroup({ group_id: args.group_id, user_id: args.user_id });
+            result.data = await this.groupLogic.joinGroup({ group_id: args.group_id, user_id: args.user_id });
 
             // Add socket to room with group_id
             this.Socket.join(result.data._id);
@@ -72,12 +74,12 @@ export default class GroupsHandler extends Handler {
         const result : SocketResponse<void> = { error: false, data: null }
         // Invoke mongoGroupsService leaveGroup
         try {
-            const group = await this.controller.leaveGroup({ group_id: args.group_id, user_id: args.user_id });
+            const group = await this.groupLogic.leaveGroup({ group_id: args.group_id, user_id: args.user_id });
             // Disconnect/remove socket from room with group_id
             this.Socket.leave(args.group_id);
             this.queueService.removeUserFromEntry(args.user_id);
 
-            //const group: PersistedGroup = await this.controller.getGroup(args.group_id);
+            //const group: PersistedGroup = await this.groupLogic.getGroup(args.group_id);
 
 
 
@@ -89,6 +91,7 @@ export default class GroupsHandler extends Handler {
             //  To room with group_id
             this.emitGroupChange(group, 'leaveGroup');
         } catch (_) {
+            console.log(_)
             result.error = true;
         }
         finally{
@@ -126,7 +129,7 @@ export default class GroupsHandler extends Handler {
     }
 
     public updateVisibility = async (group: IMongoGroup) => {
-        const result = await this.groupService.updateVisibility(group);
+        const result = await this.groupLogic.updateVisibility(group);
         this.emitGroupChange(result, 'updateVisibility');
         return result;
     }

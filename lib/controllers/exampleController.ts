@@ -2,7 +2,9 @@ import { Request, Response } from "express";
 
 import { BookService, TYPES } from "../services/interfaces";
 import { Get, Tags, Route, Controller } from "tsoa";
-import { provideSingleton, inject } from "../common/inversify.config";
+import { inject, provideSingleton } from "../common/inversify.config";
+import { provide } from "inversify-binding-decorators";
+
 
 @Tags("example")
 @Route("api")

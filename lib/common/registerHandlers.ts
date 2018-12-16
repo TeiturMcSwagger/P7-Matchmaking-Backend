@@ -20,7 +20,7 @@ export default function(io : IO.Server, socket : IO.Socket, handlerType : typeof
                 // provide it with the current socket and propegate the args
                 const result = await handler[property](args); 
 
-                // If provided, invoke the acknowledgement function with the result
+                // If provideSingletond, invoke the acknowledgement function with the result
                 if(ackFn){
                     ackFn(result);
                 }

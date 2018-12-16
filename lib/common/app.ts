@@ -6,6 +6,9 @@ import { ValidateError } from "tsoa";
 import logger from "./logger";
 import * as morgan from "morgan";
 import { Application } from "express";
+
+import "../controllers";
+
 import "../controllers";
 import "reflect-metadata";
 import * as bodyParser from "body-parser";
@@ -14,14 +17,15 @@ import {
     InversifyExpressServer,
     TYPE
 } from "inversify-express-utils";
-import { iocContainer, provideSingleton, lazyInject } from "./inversify.config";
+
+import { IIOService, TYPES, QueueService } from '../services/interfaces';
+import { iocContainer, lazyInject, provideSingleton } from "./inversify.config";
 import * as swaggerUi from "swagger-ui-express";
 import { RegisterRoutes } from "../../build/routes";
 import * as io from 'socket.io';
 import * as HTTP from 'http';
 import registerEvents from "./registerEvents";
-import { IIOService, TYPES, QueueService } from '../services/interfaces';
-import { DiscordController, GroupController } from "../controllers";
+import { QueueBusinessLogic, BUSINESSTYPES } from "../controllers/interfaces";
 
 @provideSingleton(TYPES.IIOService)
 export default class App implements IIOService {
@@ -35,7 +39,6 @@ export default class App implements IIOService {
     constructor(p: string | number = process.env.PORT) {
         this.app = express();
         this.app.use(this.allowCors);
-        var discord = iocContainer.get<DiscordController>(DiscordController)
         this.server = new InversifyExpressServer(
             iocContainer,
             null,

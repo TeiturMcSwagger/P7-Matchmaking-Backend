@@ -3,11 +3,13 @@ import { QueueService } from "./interfaces";
 import { IMongoQueueUser, QueueSchema, QueueEntry, PersistedQueueEntry } from '../models/queueModel'
 import { injectable } from "inversify";
 import { PersistedGroup } from "models/groupModel";
+import { provideSingleton } from "../common/inversify.config";
+import { provide } from "inversify-binding-decorators";
 
 
-mongoose.connect(process.env.MONGOURL, { useNewUrlParser: true });
+//mongoose.connect(process.env.MONGOURL, { useNewUrlParser: true });
 
-@injectable()
+@provide(MongoQueueService)
 export class MongoQueueService implements QueueService{
     private queueModel: mongoose.Model<IMongoQueueUser>;
 

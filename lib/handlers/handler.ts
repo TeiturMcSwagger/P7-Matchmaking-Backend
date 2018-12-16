@@ -1,5 +1,6 @@
 import * as io from 'socket.io';
 import logger from '../common/logger';
+import { provide } from 'inversify-binding-decorators';
 import { provideSingleton } from '../common/inversify.config';
 
 @provideSingleton(Handler)
