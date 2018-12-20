@@ -12,10 +12,10 @@ describe('QueueController tests', () => {
     let QueueServiceMock : jest.Mock<QueueService>
     let GroupServiceMock : jest.Mock<GroupService>
     let GroupLogicMock : jest.Mock<GroupBusinessLogic>
-    const setupMock = (queueEntries) => {
+    const setupMock = (testQueue) => {
         QueueServiceMock = jest.fn<QueueService>(() =>{
             return {
-                getEntries: jest.fn().mockReturnValue(queueEntries),
+                getEntries: jest.fn().mockReturnValue(testQueue),
                 createEntry: jest.fn().mockImplementation((e: QueueEntry):PersistedQueueEntry => {
                     return {
                         _id: mongoose.Types.ObjectId() as unknown as string, users: e.users, gameSettings: e.gameSettings
